@@ -98,7 +98,7 @@ gulp.task('test', ['prebuild'], function() {
 
 gulp.task('watch', function() {
     gulp.watch('./src/*.html', ['html']);
-    gulp.watch('./src/js/vendor/**/*.js', ['vendor']);
+ 
     gulp.watch([
             './src/js/main.js',
             './src/js/modules/**/*.js',

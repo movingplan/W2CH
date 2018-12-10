@@ -1,5 +1,5 @@
 import * as app from "../../lib/app";
-
+import * as tasks   from "../../json/data"
 "use strict"
 
 /*
@@ -10,7 +10,7 @@ export default class extends app.Model {
 
     constructor() {
         super();
-
+       
         // Arbitrary method
         this.sanitize = props => {
             for (const p in props) {
@@ -26,7 +26,7 @@ export default class extends app.Model {
 
         // Populate model
         this.set({
-            todo: '',
+            todos: tasks,
             date: Date.now()
         });
 

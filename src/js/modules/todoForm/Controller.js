@@ -14,11 +14,8 @@ export default class extends app.Controller {
 
         // Update view when model changes
         this.model.on('change', () => {
-            let todo = this.model.get('todo');
-            if (todo) {
-                todo = `<div>${todo}</div>`;
-            }
-            this.view.get('.debugArea').innerHTML = todo;
+            let todos = this.renderToDoItems();
+            this.view.get('#todolist').innerHTML = todos;
         });
 
         // Example 2 way bindings
@@ -30,9 +27,24 @@ export default class extends app.Controller {
                 model.on('setPost', () => {
                     el.value = model.get('todo');
                 });
+            },
+            '#addBtn': (el, model, view, controller) => {
+                el.onclick = (e) => {
+                    this.addToDoItem(e);
+                };
             }
 
         });
+    }
+    addToDoItem(el) {
+        console.log(el.value)
+    }
+    renderToDoItems() {
+        let list = Array.prototype.map.call(this.model.get("todos.tasks"), (o) => {
+            return `<li data-state="custom"><label class="checkbox-container" >
+        <input type="checkbox">${o.title}<span class="checkmark"></span>  </label><span class="close">×</span></li>`
+        }).join("");;
+        return list;
     }
 
 };
