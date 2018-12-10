@@ -25,8 +25,8 @@ let config = {
   Top level tasks
 */
 gulp.task('default', ['dev', 'watch']);
-gulp.task('dev', ['init.dev', 'html', 'vendor', 'js', 'css', 'test']);
-gulp.task('prod', ['init.prod', 'html', 'vendor', 'js', 'css', 'test']);
+gulp.task('dev', ['init.dev', 'html',  'js', 'css', 'test']);
+gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'test']);
 gulp.task('clean', clean);
 
 
@@ -57,13 +57,6 @@ gulp.task('html', ['prebuild'], function() {
         .pipe(gulp.dest('./dist/'))
 });
 
-gulp.task('vendor', ['prebuild'], function() {
-    return gulp.src([
-            './src/js/vendor/**/*.js'
-        ])
-        .pipe(concat('vendor.js'))
-        .pipe(gulp.dest('./dist/js/'));
-});
 
 gulp.task('js', ['prebuild'], function() {
     let src = transpile('./src/js/main.js');
@@ -135,7 +128,7 @@ function transpile(files) {
         .pipe(tap(file => {
             file.contents = browserify(file.path, {debug: true})
                 .transform('babelify', {
-                    presets: ['es2015']
+                    presets: ['@babel/env']
                 })
                 .bundle()
             }
