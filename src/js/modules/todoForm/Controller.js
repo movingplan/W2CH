@@ -43,7 +43,7 @@ export default class extends app.Controller {
         if (event.data) {
             console.log("APP_ENV: data received in boot  registerOnMessageReceivedHandler handler", event);
             this.model.set({
-                todos: event.data
+                todos: {tasks : event.data}
             });
             this.renderToDoItems();
         }
