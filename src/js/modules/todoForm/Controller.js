@@ -41,7 +41,7 @@ export default class extends app.Controller {
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: incoming data", event);
         if (event.data) {
-            console.log("APP_ENV: data regulpceived in boot  registerOnMessageReceivedHandler handler", event);
+            console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
             this.model.set({
                 todos: {tasks : event.data}
             });

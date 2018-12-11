@@ -25,9 +25,9 @@ export default class extends app.Model {
         this.on('setPre', props => this.sanitize(props));
 
         // Populate model
-        // this.set({
-        //     todos: tasks
-        // });
+        this.set({
+            todos: tasks
+        });
 
         // Set by path
         this.set('user.name', 'Guest');
