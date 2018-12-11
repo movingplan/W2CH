@@ -69,7 +69,7 @@ export default class extends app.Controller {
             }
             return `<li data-state="${item.state}" data-id="${item._id}" class="${_class}">
                         <label class="checkbox-container ${_class}"> 
-                            <input type="checkbox" ${_class ? "checked" : ""}>${item.title}<span class="checkmark"></span> 
+                            <input type="checkbox" class="${_class ? "checked" : ""}">${item.title}<span class="checkmark"></span> 
                         </label><span class="close">×</span>
                     </li>`
         });
@@ -87,8 +87,8 @@ export default class extends app.Controller {
         let listElements = this.view.getAll("li");
         for (let i = 0; i < listElements.length; i++) {
             listElements[i].onclick = function (e) {
-                let li = listElements[i].parentElement;
-
+             let li = e.target.parentElement;
+              
                 if (li.classList) {
                     li.classList.toggle("checked");
                     if (li.classList.contains("checked")) {
