@@ -10,6 +10,7 @@ export default class {
     ready() {
         return new Promise((resolve, reject) => {
             document.addEventListener("DOMContentLoaded", () => {
+                
                 // Just a dummy condition
                 if (/\w/.test(location.href)) {
                     resolve();
@@ -18,5 +19,6 @@ export default class {
             });
         });
     }
+    
 
 };
