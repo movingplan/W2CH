@@ -38,8 +38,8 @@ export default class extends app.Controller {
         window.parent.postMessage(qmObject, "*");
     }
 
-     registerOnMessageReceivedHandler(event) {
-        console.log("APP incoming data", event);
+    registerOnMessageReceivedHandler(event) {
+        console.log("APP_ENV: incoming data", event);
         if (event.data) {
             console.log("APP_ENV: data received in boot  registerOnMessageReceivedHandler handler", event);
             this.model.set({
