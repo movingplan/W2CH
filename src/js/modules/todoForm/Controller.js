@@ -45,7 +45,7 @@ export default class extends app.Controller {
             this.model.set({
                 todos: event.data
             });
-           
+            this.renderToDoItems();
         }
     }
 
