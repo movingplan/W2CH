@@ -1,5 +1,5 @@
-import Boot from "./modules/Boot/Boot";
-import ToDoForm from "./modules/todoForm/ToDoForm";
+import Boot from "./modules/boot/boot";
+import ToDoForm from "./modules/todoForm/todoform";
 
 new Boot()
     .then(() => {

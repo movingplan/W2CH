@@ -26,8 +26,7 @@ export default class extends app.Model {
 
         // Populate model
         this.set({
-            todos: tasks,
-            date: Date.now()
+            todos: tasks
         });
 
         // Set by path

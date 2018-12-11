@@ -1,7 +1,7 @@
 import * as app from "../../lib/app";
-import Model from "./Model"
-import View from "./View"
-import Controller from "./Controller"
+import Model from "./model"
+import View from "./view"
+import Controller from "./controller"
 
 "use strict"
 
