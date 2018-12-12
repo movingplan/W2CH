@@ -14,10 +14,7 @@ export default class extends app.Controller {
 
         window.onmessage = event => this.registerOnMessageReceivedHandler(event);
        
-        this.model.on('change', (e) => {
-            console.log('model changed', e);
-            this.renderToDoItems();
-        });
+      
 
         // Set listener (usefull for validaiton)
         this.model.on('setPre', props => this.isValid(props));
@@ -29,6 +26,12 @@ export default class extends app.Controller {
                 }
             }
         });
+
+        this.model.on('change', (e) => {
+            console.log('model changed: ', e);
+            this.renderToDoItems();
+        });
+
         this.sendMessage();
         window.parent.postMessage(data, "*");
     }
@@ -49,9 +52,9 @@ export default class extends app.Controller {
         if (event.data) {
             console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
             this.model.set({
-                "todos": { "tasks": event.data }
+                "tasks": { event.data }
             });
-            this.renderToDoItems();
+            //this.renderToDoItems();
         }
     }
 
@@ -65,7 +68,7 @@ export default class extends app.Controller {
     renderToDoItems() {
         // Click on a close button to hide the current list item
         let model = this.model.get("tasks");
-        console.log(this.model);
+        console.log(this.model, model);
         
         let list = Array.prototype.map.call(model, (item) => {
             let _class = "";
