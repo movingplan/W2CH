@@ -76,7 +76,7 @@ export default class extends app.Controller {
         let title = this.view.get("#todo").value;
         let guid = this.createGuid();
         data.tasks.push({'_id': guid, 'title': title, 'state': "custom" });
-        window.parent.postMessage( data.tasks, "*");
+        window.parent.postMessage( {"tasks":data.tasks}, "*");
         this.view.get("#todo").value = '';
     }
     setModelState(el){
