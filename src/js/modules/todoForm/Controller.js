@@ -1,5 +1,5 @@
 import * as app from "../../lib/app";
-import * as data from "../../json/data"
+import * as data from "../../json/data";
 "use strict"
 
 /*
@@ -11,26 +11,31 @@ export default class extends app.Controller {
 
     constructor() {
         super();
-        window.onmessage =  event => this.registerOnMessageReceivedHandler(event);
-        // Update view when model changes
+
+        window.onmessage = event => this.registerOnMessageReceivedHandler(event);
+        window.postMessage(data, "*");
         this.model.on('change', (e) => {
             console.log('model changed', e);
             this.renderToDoItems();
         });
 
-        // Example 2 way bindings
+        // Set listener (usefull for validaiton)
+        this.model.on('setPre', props => this.isValid(props));
+
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => {
                     this.addToDoItem();
-
                 }
-                    
             }
-
         });
         this.sendMessage();
     }
+
+    isValid(prop) {
+        console.log('isValid: ', prop);
+    }
+
     //send object not literal
     sendMessage() {
         let queryMessageString = '{"query": {"key" : "days", "param": 90, "collectionName": "MovementTasks"}}';
@@ -43,7 +48,7 @@ export default class extends app.Controller {
         if (event.data) {
             console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
             this.model.set({
-                "todos": {"tasks" : event.data}
+                "todos": { "tasks": event.data }
             });
             this.renderToDoItems();
         }
@@ -52,14 +57,16 @@ export default class extends app.Controller {
     addToDoItem(el) {
         let title = this.view.get("#todo").value;
         data.tasks.push({ 'title': title, 'state': "custom" });
-        this.renderToDoItems();
+        //this.renderToDoItems();
         this.view.get("#todo").value = '';
     }
 
     renderToDoItems() {
         // Click on a close button to hide the current list item
-
-        let list = Array.prototype.map.call(this.model.get("todos.tasks"), (item) => {
+        let model = this.model.get("tasks");
+        console.log(this.model);
+        
+        let list = Array.prototype.map.call(model, (item) => {
             let _class = "";
             if (item.state === "deleted") {
                 return "";
@@ -87,8 +94,8 @@ export default class extends app.Controller {
         let listElements = this.view.getAll("li");
         for (let i = 0; i < listElements.length; i++) {
             listElements[i].onclick = function (e) {
-             let li = e.target.parentElement;
-              
+                let li = e.target.parentElement;
+
                 if (li.classList) {
                     li.classList.toggle("checked");
                     if (li.classList.contains("checked")) {
