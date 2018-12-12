@@ -52,7 +52,7 @@ export default class extends app.Controller {
         if (event.data) {
             console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
             if(event.data && event.data.hasOwnProperty("tasks")){
-                this.model.set({'tasks' :event.data.tasks});
+                this.model.set({'tasks' : event.data.tasks});
             }
             //this.renderToDoItems();
         }
