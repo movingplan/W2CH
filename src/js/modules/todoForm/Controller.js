@@ -41,23 +41,20 @@ export default class extends app.Controller {
             console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
             if(event.data && event.data.hasOwnProperty("tasks")){
                 this.model.set({'tasks' : event.data.tasks});
-               // this.renderToDoItems();
             }
-            //this.renderToDoItems();
         }
     }
 
     addToDoItem(el) {
         let title = this.view.get("#todo").value;
         data.tasks.push({ 'title': title, 'state': "custom" });
-        //this.renderToDoItems();
+        window.parent.postMessage(data, "*");
         this.view.get("#todo").value = '';
     }
 
     renderToDoItems() {
         // Click on a close button to hide the current list item
         let model = this.model.get("tasks");
-        console.log(this.model, model);
         if(!model) {return; }
         let list = Array.prototype.map.call(model, (item) => {
             let _class = "";

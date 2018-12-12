@@ -119,23 +119,10 @@ export default class extends app.Controller {
 
         // Example 2 way bindings
         this.bind({
-
-            '#name': (el, model, view, controller) => {
-                el.onkeyup = () => {
-                    model.set('user.name', el.value);
+            '#addBtn': (el, model, view, controller) => {
+                el.onclick = (e) => {
+                    this.addToDoItem();
                 }
-                model.on('setPost', () => {
-                    el.value = model.get('user.name');
-                });
-            },
-
-            '#todo': (el, model, view, controller) => {
-                el.onkeyup = () => {
-                    model.set('todo', el.value);
-                }
-                model.on('setPost', () => {
-                    el.value = model.get('todo');
-                });
             }
 
         });

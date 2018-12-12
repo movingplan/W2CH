@@ -13,7 +13,6 @@ export default class extends app.Model {
        
         this.on('change', (e) => {
             console.log('model changed from base model: ', e);
-           // this.renderToDoItems();
         });
         this.sanitize = props => {
             for (const p in props) {
