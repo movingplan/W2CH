@@ -25,7 +25,7 @@ export default class extends app.Model {
         this.on('setPre', props => this.sanitize(props));
         
         // Set by path
-        this.set('user.name', 'Guest');
+       // this.set('user.name', 'Guest');
     }
 
 };
