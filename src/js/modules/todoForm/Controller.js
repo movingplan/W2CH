@@ -63,7 +63,7 @@ export default class extends app.Controller {
             }
             if(event.data  && event.data.hasOwnProperty("tasks")){
                
-                this.model.set({'tasks' : event.data});
+                this.model.set({'tasks' : event.data.tasks});
             }
         }
     }
