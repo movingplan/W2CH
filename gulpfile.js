@@ -27,7 +27,7 @@ let config = {
 */
 gulp.task('default', ['dev', 'watch']);
 gulp.task('dev', ['init.dev', 'html',  'js', 'css', 'test']);
-gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'test', 'commit', 'push']);
+gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'test']);
 gulp.task('clean', clean);
 
 
