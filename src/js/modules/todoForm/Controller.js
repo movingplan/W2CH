@@ -27,13 +27,15 @@ export default class extends app.Controller {
             }
         });
 
+       
+
+        this.sendMessage();
+        window.parent.postMessage(data, "*");
+        
         this.model.on('change', (e) => {
             console.log('model changed: ', e);
             this.renderToDoItems();
         });
-
-        this.sendMessage();
-        window.parent.postMessage(data, "*");
     }
 
     isValid(prop) {
