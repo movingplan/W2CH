@@ -13,7 +13,7 @@ export default class extends app.Controller {
         super();
 
         window.onmessage = event => this.registerOnMessageReceivedHandler(event);
-        window.postMessage(data, "*");
+       
         this.model.on('change', (e) => {
             console.log('model changed', e);
             this.renderToDoItems();
@@ -30,6 +30,7 @@ export default class extends app.Controller {
             }
         });
         this.sendMessage();
+        window.parent.postMessage(data, "*");
     }
 
     isValid(prop) {
