@@ -69,7 +69,7 @@ export default class extends app.Controller {
         // Click on a close button to hide the current list item
         let model = this.model.get("tasks");
         console.log(this.model, model);
-        
+        if(!model) {return; }
         let list = Array.prototype.map.call(model, (item) => {
             let _class = "";
             if (item.state === "deleted") {
