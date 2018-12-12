@@ -62,7 +62,8 @@ export default class extends app.Controller {
 
             }
             if(event.data ){
-                this.model.set({'tasks' : event.data.tasks});
+               
+                this.model.set({'tasks' : event.data});
             }
         }
     }
