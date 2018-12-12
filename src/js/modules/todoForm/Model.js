@@ -11,7 +11,10 @@ export default class extends app.Model {
     constructor() {
         super();
        
-        // Arbitrary method
+        this.on('change', (e) => {
+            console.log('model changed: ', e);
+            this.renderToDoItems();
+        });
         this.sanitize = props => {
             for (const p in props) {
                 if (props.hasOwnProperty(p) && typeof props[p] === "string") {
