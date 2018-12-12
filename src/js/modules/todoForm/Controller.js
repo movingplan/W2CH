@@ -51,7 +51,9 @@ export default class extends app.Controller {
         console.log("APP_ENV: incoming data", event);
         if (event.data) {
             console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
-            this.model.set(event.data);
+            if(event.data && event.data.hasOwnProperty("tasks")){
+                this.model.set(event.data.tasks);
+            }
             //this.renderToDoItems();
         }
     }
