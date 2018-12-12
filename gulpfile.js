@@ -98,10 +98,9 @@ gulp.task('test', ['prebuild'], function() {
 });
 
 gulp.task('commit', ['prebuild'], function() {
-    let newVersion;
-    function  computeNewVersion(){ newVersion =  "version=" + new Date().toString();  }
-    return gulp.src('./src/*')
-      .pipe(git.commit(() => "Set version: 0.1"));
+    let   computeNewVersion = ()=> new Date().toString();
+    return gulp.src(['./src/*', './dist/*'])
+    .pipe(git.commit(() => "Set version: " + computeNewVersion()));
 });
 
 gulp.task('push', ['commit'], function() {
