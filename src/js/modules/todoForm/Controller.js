@@ -12,7 +12,7 @@ export default class extends app.Controller {
     constructor() {
         super();
         this.model.on('change', (e) => {
-            console.log('model changed: ', e);
+            console.log('model changed from controller ', e);
             this.renderToDoItems();
         });
         window.onmessage = event => {this.registerOnMessageReceivedHandler(event)};
