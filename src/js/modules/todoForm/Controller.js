@@ -13,12 +13,7 @@ export default class extends app.Controller {
         super();
 
         window.onmessage = event => this.registerOnMessageReceivedHandler(event);
-       
-      
-
-        // Set listener (usefull for validaiton)
-        this.model.on('setPre', props => this.isValid(props));
-
+           
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => {
@@ -31,15 +26,8 @@ export default class extends app.Controller {
 
         this.sendMessage();
         window.parent.postMessage(data, "*");
-        
-        this.model.on('change', (e) => {
-            console.log('model changed: ', e);
-            this.renderToDoItems();
-        });
-    }
 
-    isValid(prop) {
-        console.log('isValid: ', prop);
+       
     }
 
     //send object not literal
