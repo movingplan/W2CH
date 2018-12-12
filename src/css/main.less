@@ -108,7 +108,8 @@ ul li.checked {
   width: auto;
  /* float: left;*/
   margin-right: 10px;
- 
+  font-family:Roboto;
+    font-weight: 200;
   display: block;
   position: relative;
   padding-left: 35px;
@@ -118,6 +119,7 @@ ul li.checked {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+ 
 }
 
 /* Hide the browser's default checkbox */
@@ -142,8 +144,8 @@ ul li.checked {
 /* When the checkbox is checked, add a blue background */
 .checkbox-container input:checked ~ .checkmark {
   background-color: #66cc00;
-}
 
+}
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
   content: "";
@@ -154,6 +156,7 @@ ul li.checked {
 /* Show the checkmark when checked */
 .checkbox-container input:checked ~ .checkmark:after {
   display: block;
+ 
 }
 
 /* Style the checkmark/indicator */
@@ -167,4 +170,5 @@ ul li.checked {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+  
 }
