@@ -13,7 +13,8 @@ let gulp = require('gulp'),
     less = require('gulp-less'),
     cleanCSS = require('gulp-clean-css'),
     watch = require('gulp-watch'),
-    tap = require('gulp-tap');
+    tap = require('gulp-tap'),
+    git = require('gulp-git');
 
 let config = {
         buildType: 'dev',
@@ -26,7 +27,7 @@ let config = {
 */
 gulp.task('default', ['dev', 'watch']);
 gulp.task('dev', ['init.dev', 'html',  'js', 'css', 'test']);
-gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'test']);
+gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'test', 'commit', 'push']);
 gulp.task('clean', clean);
 
 
@@ -95,6 +96,20 @@ gulp.task('test', ['prebuild'], function() {
     return transpile('./src/test/**/*.js')
         .pipe(gulp.dest('./dist/test/'));
 });
+
+gulp.task('commit', ['prebuild'], function() {
+    let newVersion;
+    function  computeNewVersion(){ newVersion =  "version=" + new Date().toString();  }
+    return gulp.src('./src/*')
+      .pipe(git.commit(() => "Set version: 0.1"));
+});
+
+gulp.task('push', ['commit'], function() {
+    git.push('origin', 'master', function (err) {
+        if (err) throw err;
+      });
+});
+
 
 gulp.task('watch', function() {
     gulp.watch('./src/*.html', ['html']);

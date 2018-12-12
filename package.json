@@ -40,7 +40,8 @@
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
     "babel": "^6.23.0",
-    "babel-cli": "^6.26.0"
+    "babel-cli": "^6.26.0",
+    "gulp-git": "^2.8.0"
   },
   "babel": {
     "presets": [
