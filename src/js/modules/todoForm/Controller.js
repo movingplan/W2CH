@@ -13,9 +13,9 @@ export default class extends app.Controller {
         super();
         this.model.on('change', (e) => {
             console.log('model changed: ', e);
-           // this.renderToDoItems();
+            this.renderToDoItems();
         });
-        window.onmessage = event => this.registerOnMessageReceivedHandler(event);
+        window.onmessage = event => {this.registerOnMessageReceivedHandler(event)};
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => {
@@ -41,7 +41,7 @@ export default class extends app.Controller {
             console.log("APP_ENV: data received in registerOnMessageReceivedHandler handler", event);
             if(event.data && event.data.hasOwnProperty("tasks")){
                 this.model.set({'tasks' : event.data.tasks});
-                this.renderToDoItems();
+               // this.renderToDoItems();
             }
             //this.renderToDoItems();
         }
