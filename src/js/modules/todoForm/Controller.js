@@ -15,6 +15,7 @@ export default class extends app.Controller {
         this.model.on('change', (e) => {
             console.log('model changed from controller ', e);
             this.renderToDoItems();
+            this.sendMesssageToWix({"save":"Y", "tasks": this.model.get('tasks')});
         });
 
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
@@ -41,7 +42,6 @@ export default class extends app.Controller {
         });
 
         this.getItems();
-        this.sendMessageToWix(new ToDoMessage('init').get());
     }
     sendMessageToWix(jsObj) {
         console.log('APP_ENV: sending to wix:', jsObj)
@@ -54,17 +54,18 @@ export default class extends app.Controller {
 
     //send object not literal
     getItems() {
-        let queryMessageString = new ToDoMessage('get');
-        const qmObject = queryMessageString.get();
-        this.sendMesssageToWix(qmObject);
+         this.sendMesssageToWix({"get":"Y"});
     }
 
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
             if ( event.data.hasOwnProperty("save")) {
-                let model = this.model.get('tasks');
-                this.sendMessageToWix(model);
+                let model = this.model.get('tasks')
+                this.sendMessageToWix({"save":"Y", "tasks": model});
+            }
+            if ( event.data.hasOwnProperty("saved")) {Y
+                this.model.set('tasks', event.data.tasks);
             }
             if ( event.data.hasOwnProperty("tasks")) {
                 this.model.set({ 'tasks': event.data.tasks });
@@ -83,7 +84,7 @@ export default class extends app.Controller {
         let guid = this.createGuid();
         data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
         console.log('item added, model state:', this.model.get('tasks'));
-        
+        this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
     }
 
@@ -97,7 +98,7 @@ export default class extends app.Controller {
             return value;
         });
         this.model.set({ 'tasks': data.tasks });
-        this.sendMesssageToWix(this.model.get('tasks'));
+        
     }
 
     renderToDoItems() {
