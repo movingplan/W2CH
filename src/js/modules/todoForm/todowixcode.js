@@ -3,7 +3,7 @@ import { isValidDate } from 'public/common/helpers.js'
 import wixWindow from 'wix-window';
 import wixData from 'wix-data';
 import wixUsers from 'wix-users';
-import { local } from 'wix-storage';
+import  {local}  from 'wix-storage';
 
 $w.onReady(() => {
 
@@ -46,7 +46,7 @@ $w.onReady(() => {
 
         let receivedData = event.data;
         let tasks = receivedData.tasks;
-        let useremail = getEmail();
+        let useremail = await getEmail();
 
         if (receivedData.hasOwnProperty("save")) {
             if (!receivedData.tasks) {
@@ -78,8 +78,8 @@ $w.onReady(() => {
         if (receivedData.hasOwnProperty("get")) {
             let lclData = checkLocal;
             if (!useremail) {
-                let localdata = lclData().then(res => res);
-                console.log(`WIX_ENV: user not signed in, data in local: ${localdata}`);
+                let localdata = await lclData().then(res => res);
+                console.log(`WIX_ENV: user not signed in, data in local: ${Promise.resolve(localdata)}`);
                 if (localdata) {
                     return $w("#html1").postMessage({ "tasks": localdata }, "*");
                 }
@@ -88,25 +88,31 @@ $w.onReady(() => {
             }
             
             if (useremail) {
-                let localdata = lclData().then(res => res);
+                let localdata = await lclData();
                 if (localdata) {
-                    console.log(`WIX_ENV: user is signed in, data in local: ${localdata}`);
+                    console.log(`WIX_ENV: user is signed in ${useremail}, data in local: ${Promise.resolve(localdata)}`);
                     console.log(`WIX_ENV: transfering from local store to collection...`)
                     let toSave = {
                         "tasks": localdata,
                         "email": useremail
                     };
                     try {
-                        return await wixData.save("UserTasks", toSave)
+                        wixData.save("UserTasks", toSave)
                             .then(result => $w("#html1").postMessage({ "saved_collection": "true", result }, '*')).then(() => local.removeItem("tasks")).then(() => console.log("WIX_ENV: data transfered to collection and removed from local store"));
                     } catch (err) {
-                        console.log(`WIX_APP_SAVE_ERR_COLLECTION: $(err)`)
+                        console.log(`WIX_APP_SAVE_ERR_COLLECTION: ${err}`)
                     }
                     
-                    return $w("#html1").postMessage({ "tasks": localdata } , "*");
+                    $w("#html1").postMessage({ "tasks": localdata } , "*");
                    
                 }
-                return  await getUserTasks(useremail);
+                try {
+                getUserTasks(useremail).then(result=>$w("#html1").postMessage({ "tasks": result } , "*");)
+                    
+                } catch (error) {
+                    console.log(`WIX ERROR GET USER TASKS ${error}`);
+                }
+                
             }
         }
       
