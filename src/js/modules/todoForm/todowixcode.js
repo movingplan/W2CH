@@ -17,7 +17,7 @@ $w.onReady(() => {
                 return  await user.getEmail();
                 
             } catch (err) {
-                console.log('user error', err);
+                console.log('user error in getEmail:', err);
                 return undefined;
             }
         };
@@ -54,12 +54,12 @@ $w.onReady(() => {
             }
 
             let toSave = {
-                "tasks": JSON.stringify(tasks),
-                "email": useremail
+                tasks: tasks,
+                email: useremail
             };
             if (useremail) { // user is signed in, so use collection as storage
                 try {
-                    return await wixData.save("UserTasks", toSave)
+                    await wixData.save("UserTasks", toSave)
                         .then(result => $w("#html1").postMessage({ "saved": "true", "tasks": result }, '*'));
                 } catch (err) {
                     console.log(`WIX_APP_SAVE_ERR_COLLECTION: ${err}`)
@@ -68,7 +68,10 @@ $w.onReady(() => {
 
             if (!useremail) { //user not signed in, so use local storage 
                 try {
-                    return await local.removeItem("tasks").then(e => local.setItem("tasks", toSave)).then((result) => $w("#html1").postMessage({ "saved": "true", "tasks": result }, '*'));
+                        local.removeItem("tasks");
+                        local.setItem("tasks", JSON.stringify(toSave));
+                        let model = JSON.parse(local.getItem("tasks"));
+                     $w("#html1").postMessage({ "saved": "true", "tasks": model.tasks }, '*');
                 } catch (err) {
                     console.log(`WIX_APP_SAVE_ERR_LC_STORAGE: ${err}`)
                 }
@@ -76,10 +79,10 @@ $w.onReady(() => {
         }
 
         if (receivedData.hasOwnProperty("get")) {
-            let lclData = checkLocal;
+           
             if (!useremail) {
-                let localdata = await lclData().then(res => res);
-                console.log(`WIX_ENV: user not signed in, data in local: ${Promise.resolve(localdata)}`);
+                let localdata = await checkLocal();
+                console.log(`WIX_ENV: user not signed in, data in local: ${Promise.resolve(await checkLocal())}`);
                 if (localdata) {
                     return $w("#html1").postMessage({ "tasks": localdata }, "*");
                 }
@@ -88,9 +91,9 @@ $w.onReady(() => {
             }
             
             if (useremail) {
-                let localdata = await lclData();
+                let localdata = await checkLocal();
                 if (localdata) {
-                    console.log(`WIX_ENV: user is signed in ${useremail}, data in local: ${Promise.resolve(localdata)}`);
+                    console.log(`WIX_ENV: user is signed in ${useremail}, data in local: ${Promise.resolve(await checkLocal())}`);
                     console.log(`WIX_ENV: transfering from local store to collection...`)
                     let toSave = {
                         "tasks": localdata,
@@ -107,7 +110,7 @@ $w.onReady(() => {
                    
                 }
                 try {
-                getUserTasks(useremail).then(result=>$w("#html1").postMessage({ "tasks": result } , "*");)
+                    getUserTasks(useremail).then(result=>$w("#html1").postMessage({ "tasks": result } , "*")).then((e)=>console.log(`get user tasks finished, posted message to APP_ENV ${e}`))
                     
                 } catch (error) {
                     console.log(`WIX ERROR GET USER TASKS ${error}`);

@@ -97,8 +97,8 @@ export default class extends app.Controller {
         if(!title) return ;
         let guid = this.createGuid();
         data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
-        console.log('item added, model state:', this.model.get('tasks'));
         this.model.set({ 'tasks': data.tasks });
+        console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
     }
 
@@ -129,7 +129,7 @@ export default class extends app.Controller {
             }
             return `<li data-state="${!item.state ? "default" : item.state}" data-id="${item._id}" class="${_class ? "checked" : ""}">
                         <label class="checkbox-container ${_class}"> 
-                            <input type="checkbox" class="${_class ? "checked" : ""}">${item.title}<span class="checkmark"></span> 
+                            <input type="checkbox" ${_class ? "checked" : ""} class="${_class ? "checked" : ""}">${item.title}<span class="checkmark"></span> 
                         </label><span class="close">×</span>
                     </li>`
         });
