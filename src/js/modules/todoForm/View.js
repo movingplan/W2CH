@@ -11,7 +11,7 @@ export default class extends app.View {
 
     constructor() {
         super();
-
+       
         // Set DOM ref
         this.el = document.getElementById("todosection");
     }
