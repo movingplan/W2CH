@@ -13,12 +13,14 @@ export default class extends app.Controller {
     constructor() {
         super();
         
+        window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
+
         this.model.on('change', (e) => {
             console.log('model changed from controller ', e);
             this.renderToDoItems();
         });
 
-        window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
+       
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => {
@@ -43,8 +45,7 @@ export default class extends app.Controller {
         let initData = {
             get: "Y"
         };
-        console.log('APP_ENV: sending to wix:', initData)
-        window.parent.postMessage(initData, "*");
+        this.sendMessageToWix(initData);
     }
     sendMessageToWix(jsObj) {
         
