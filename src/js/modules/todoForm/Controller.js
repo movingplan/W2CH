@@ -28,24 +28,24 @@ export default class extends app.Controller {
                 }
             }
         });
-        this.bind({
-            '#debug': (el, model, view, controller) => {
-                el.onclick = (e) => {
-                    this.saveItems();
-                };
-            }
-        });
-        this.bind({
-            '#todolist': (el, model, view, controller) => {
-                el.onclick = (e) => {
-                    this.saveItems();
-                };
-            }
-        });
+        // this.bind({
+        //     '#debug': (el, model, view, controller) => {
+        //         el.onclick = (e) => {
+        //             //this.saveItems();
+        //         };
+        //     }
+        // });
+        // this.bind({
+        //     '#todolist': (el, model, view, controller) => {
+        //         el.onclick = (e) => {
+        //             //this.saveItems();
+        //         };
+        //     }
+        // });
         let initData = {
             get: "Y"
         };
-        this.sendMessageToWix(initData);
+        window.parent.postMessage(initData, "*");
     }
     sendMessageToWix(jsObj) {
         
