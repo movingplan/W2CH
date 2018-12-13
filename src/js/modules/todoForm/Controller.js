@@ -15,7 +15,7 @@ export default class extends app.Controller {
         this.model.on('change', (e) => {
             console.log('model changed from controller ', e);
             this.renderToDoItems();
-            this.sendMesssageToWix({"save":"Y", "tasks": this.model.get('tasks')});
+            this.sendMesssageToWix(`{"save":"Y", "tasks": ${this.model.get('tasks')}`);
         });
 
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
@@ -41,11 +41,12 @@ export default class extends app.Controller {
             }
         });
 
-        this.getItems();
+        ()=>this.getItems();
     }
     sendMessageToWix(jsObj) {
-        console.log('APP_ENV: sending to wix:', jsObj)
-        window.parent.postMessage(jsObj, "*");
+        var toSend = JSON.parse(jsObj);
+        console.log('APP_ENV: sending to wix:', toSend)
+        window.parent.postMessage(toSend, "*");
     }
     saveItems() {
         let message = { "dataToSave": () => this.model.get("tasks").toJSON() };
@@ -54,7 +55,7 @@ export default class extends app.Controller {
 
     //send object not literal
     getItems() {
-         this.sendMesssageToWix({"get":"Y"});
+         this.sendMesssageToWix('{"get":"Y"}');
     }
 
     registerOnMessageReceivedHandler(event) {
