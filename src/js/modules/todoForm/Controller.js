@@ -43,7 +43,8 @@ export default class extends app.Controller {
         let initData = {
             get: "Y"
         };
-        this.sendMessageToWix(initData);
+        console.log('APP_ENV: sending to wix:', initData)
+        window.parent.postMessage(initData, "*");
     }
     sendMessageToWix(jsObj) {
         
