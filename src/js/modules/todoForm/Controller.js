@@ -13,8 +13,8 @@ export default class extends app.Controller {
     constructor() {
         super();
         
-        window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
-
+        //window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
+        window.parent.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
         this.model.on('change', (e) => {
             console.log('model changed from controller ', e);
             this.renderToDoItems();
@@ -134,7 +134,7 @@ export default class extends app.Controller {
         });
 
         this.view.get("#todolist").innerHTML = list.join("");
-        //this.view.get("#todolist").style.fontFamily = "Roboto";
+        this.view.get("#todolist").style.fontFamily = "Roboto";
         let close = this.view.getAll("span.close");
 
         for (let i = 0; i < close.length; i++) {
