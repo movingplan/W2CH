@@ -128,13 +128,13 @@ export default class extends app.Controller {
             }
             return `<li data-state="${!item.state ? "default" : item.state}" data-id="${item._id}" class="${_class ? "checked" : ""}">
                         <label class="checkbox-container ${_class}"> 
-                            <input type="checkbox" ${_class ? "checked" : ""} class="${_class ? "checked" : ""}">${item.title}<span class="checkmark"></span> 
+                            <input type="checkbox" ${_class ? "checked" : ""} class="${_class ? "checked" : ""}"><span class="todo-item-title">${item.title}</span><span class="checkmark"></span> 
                         </label><span class="close">×</span>
                     </li>`
         });
 
         this.view.get("#todolist").innerHTML = list.join("");
-        this.view.get("#todolist").style.fontFamily = "Roboto";
+        //this.view.get("#todolist").style.fontFamily = "Roboto";
         let close = this.view.getAll("span.close");
 
         for (let i = 0; i < close.length; i++) {

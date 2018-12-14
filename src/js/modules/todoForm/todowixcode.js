@@ -7,7 +7,11 @@ import  {local}  from 'wix-storage';
 
    
 $w.onReady(() => {
- $w("#html1").postMessage({ready: "Y"}, "*");
+    if (wixWindow.rendering.renderCycle !== 2) {
+        console.log(`rendering cycle: ${wixWindow.rendering.renderCycle}`);
+        return;
+    }
+ $w("#html1").postMessage({"ready": "Y"}, "*");
 
  $w("#html1").onMessage(async (event) => {
 
