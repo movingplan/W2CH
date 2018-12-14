@@ -82,27 +82,36 @@ export default class extends app.Controller {
         let guid = this.createGuid();
         let data = {tasks: this.model.get('tasks')};
         data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
-        this.model.set({ 'tasks': data.tasks });
+       
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
-        let model = this.model.get('tasks')
-        let data = {
-            tasks: model,
-            get : "Y"
-        }
-        this.sendMessageToWix(data);
+        
+        let tosend = {
+            tasks: this.model.get('tasks'),
+            save : "Y"
+        };
+        sendMessageToWix(tosend);
     }
-
+    removeToDoItem(){
+        let data = {tasks: this.model.get('tasks')};
+               
+        let tosend = {
+            tasks: data.tasks,
+            save : "Y"
+        }
+        sendMessageToWix(tosend);
+    }
     setModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
         console.log(dataset);
-        data.tasks.map(function (value, index, arr) {
+        let data = {tasks: this.model.get('tasks')};
+         data.tasks.map(function (value, index, arr) {
             if (value._id === dataset.id) {
                 value.state = dataset.state;
             }
             return value;
         });
-        this.model.set({ 'tasks': data.tasks });
+        return data;
         
     }
 
@@ -134,7 +143,13 @@ export default class extends app.Controller {
                 let li = close[i].parentElement;
                 li.style.display = "none";
                 li.dataset.state = "deleted";
-                this.setModelState(e);
+                let data = this.setModelState(el);
+                let tosend = {
+                    tasks: data.tasks,
+                    save : "Y"
+                }
+                sendMessageToWix(tosend);
+               
             };
         }
         let inputs = this.view.getAll("input");
@@ -177,7 +192,12 @@ export default class extends app.Controller {
                         li.classList.remove('checked');
                         li.dataset.state = "default";
                     }
-                    this.setModelState(e);
+                    let data = this.setModelState(el);
+                    let tosend = {
+                        tasks: data.tasks,
+                        save : "Y"
+                    }
+                    sendMessageToWix(tosend);
                 };
         }
     }
