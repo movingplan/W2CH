@@ -14,7 +14,7 @@ export default class extends app.Controller {
         super();
         
         //window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
-        window.parent.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
+        window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
         this.model.on('change', (e) => {
             console.log('model changed from controller ', e);
             this.renderToDoItems();
