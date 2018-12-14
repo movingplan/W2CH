@@ -134,6 +134,7 @@ export default class extends app.Controller {
         });
 
         this.view.get("#todolist").innerHTML = list.join("");
+        this.view.get("#todolist").style.fontFamily = "Roboto";
         let close = this.view.getAll("span.close");
 
         for (let i = 0; i < close.length; i++) {
