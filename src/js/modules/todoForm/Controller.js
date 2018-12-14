@@ -29,7 +29,7 @@ export default class extends app.Controller {
             }
         });
        
-        
+       
     }
     sendMessageToWix(jsObj) {
         console.log('APP_ENV: sending to wix:', jsObj)
@@ -143,7 +143,7 @@ export default class extends app.Controller {
                 let li = close[i].parentElement;
                 li.style.display = "none";
                 li.dataset.state = "deleted";
-                let data = this.setModelState(el);
+                let data = this.setModelState(li);
                 let tosend = {
                     tasks: data.tasks,
                     save : "Y"
