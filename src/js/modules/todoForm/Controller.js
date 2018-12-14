@@ -33,7 +33,7 @@ export default class extends app.Controller {
                 el.onkeypress = (e) => {
 
                     let code = (e.keyCode ? e.keyCode : e.which);
-                    console.log(code);
+                   
                     if(code == 13) { //Enter keycode
                         this.addToDoItem(e);
                     }
@@ -93,7 +93,11 @@ export default class extends app.Controller {
         if(!title) return ;
         let guid = this.createGuid();
         let data = {tasks: this.model.get('tasks')};
+        if(data.length > 0){
         data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
+        }else{
+            data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
+        }
        
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
