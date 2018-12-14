@@ -85,6 +85,12 @@ export default class extends app.Controller {
         this.model.set({ 'tasks': data.tasks });
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
+        let model = this.model.get('tasks')
+        let data = {
+            tasks: model,
+            get : "Y"
+        }
+        this.sendMessageToWix(data);
     }
 
     setModelState(el) {
