@@ -1,5 +1,5 @@
 import * as app from "../../lib/app";
-import * as data from "../../json/data";
+//import * as data from "../../json/data";
 import * as ToDoMessage from "./todomessage";
 "use strict"
 
@@ -96,6 +96,7 @@ export default class extends app.Controller {
         let title = this.view.get("#todo").value;
         if(!title) return ;
         let guid = this.createGuid();
+        data = {tasks: this.model.get('tasks')};
         data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
         this.model.set({ 'tasks': data.tasks });
         console.log('item added, model state:', this.model.get('tasks'));
