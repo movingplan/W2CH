@@ -80,7 +80,7 @@ export default class extends app.Controller {
         if(!title) return ;
         let guid = this.createGuid();
         let data = {tasks: this.model.get('tasks')};
-        data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
+        data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
        
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
