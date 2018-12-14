@@ -143,7 +143,7 @@ export default class extends app.Controller {
                 let li = close[i].parentElement;
                 li.style.display = "none";
                 li.dataset.state = "deleted";
-                let data = this.setModelState(li);
+                let data = this.setModelState(e);
                 let tosend = {
                     tasks: data.tasks,
                     save : "Y"
@@ -152,15 +152,7 @@ export default class extends app.Controller {
                
             };
         }
-        let inputs = this.view.getAll("input");
-
-        for (let i = 0; i < inputs.length; i++) {
-            inputs[i].onclick = (e) => {
-                console.log(e);
-                let i = e.target;
-
-            };
-        }
+       
 
         let listElements = this.view.getAll("li");
         for (let i = 0; i < listElements.length; i++) {
@@ -192,7 +184,7 @@ export default class extends app.Controller {
                         li.classList.remove('checked');
                         li.dataset.state = "default";
                     }
-                    let data = this.setModelState(el);
+                    let data = this.setModelState(e);
                     let tosend = {
                         tasks: data.tasks,
                         save : "Y"
