@@ -46,8 +46,9 @@ export default class extends app.Controller {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
             if ( event.data.hasOwnProperty("ready")) {
+                let model = this.model.get('tasks')
                 let data = {
-                    tasks: this.model.get('tasks'),
+                    tasks: model,
                     get : "Y"
                 }
                 this.sendMessageToWix(data);
@@ -79,7 +80,7 @@ export default class extends app.Controller {
         let title = this.view.get("#todo").value;
         if(!title) return ;
         let guid = this.createGuid();
-        data = {tasks: this.model.get('tasks')};
+        let data = {tasks: this.model.get('tasks')};
         data.tasks.push({ '_id': guid, 'title': title, 'state': "custom" });
         this.model.set({ 'tasks': data.tasks });
         console.log('item added, model state:', this.model.get('tasks'));
