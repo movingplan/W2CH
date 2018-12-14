@@ -28,27 +28,10 @@ export default class extends app.Controller {
                 }
             }
         });
-        // this.bind({
-        //     '#debug': (el, model, view, controller) => {
-        //         el.onclick = (e) => {
-        //             //this.saveItems();
-        //         };
-        //     }
-        // });
-        // this.bind({
-        //     '#todolist': (el, model, view, controller) => {
-        //         el.onclick = (e) => {
-        //             //this.saveItems();
-        //         };
-        //     }
-        // });
-        let initData = {
-            get: "Y"
-        };
-        window.parent.postMessage(initData, "*");
+       
+        
     }
     sendMessageToWix(jsObj) {
-        
         console.log('APP_ENV: sending to wix:', jsObj)
         window.parent.postMessage(jsObj, "*");
     }
@@ -57,18 +40,18 @@ export default class extends app.Controller {
         this.view.get(".debugArea").innerHTML = JSON.stringify(this.model.get("tasks"));
     }
 
-    //send object not literal
-    getItems() {
-        let initData = {
-            get: "Y"
-        };
-        console.log('APP_ENV: sending to wix:', initData)
-        window.parent.postMessage(initData, "*");
-    }
+   
 
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
+            if ( event.data.hasOwnProperty("ready")) {
+                let data = {
+                    tasks: model,
+                    get : "Y"
+                }
+                this.sendMessageToWix(data);
+            }
             if ( event.data.hasOwnProperty("save")) {
                 let model = this.model.get('tasks')
                 let data = {

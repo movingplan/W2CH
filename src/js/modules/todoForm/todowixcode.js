@@ -5,9 +5,11 @@ import wixData from 'wix-data';
 import wixUsers from 'wix-users';
 import  {local}  from 'wix-storage';
 
+   
 $w.onReady(() => {
+ $w("#html1").postMessage({ready: "Y"}, "*");
 
-    $w("#html1").onMessage(async (event) => {
+ $w("#html1").onMessage(async (event) => {
 
         console.log(console.log('WIX_ENV: data received from APP_ENV', event));
 
@@ -84,7 +86,8 @@ $w.onReady(() => {
                 let localdata = await checkLocal();
                 console.log(`WIX_ENV: user not signed in, data in local: ${Promise.resolve(await checkLocal())}`);
                 if (localdata) {
-                    return $w("#html1").postMessage({ "tasks": localdata }, "*");
+                    let model = JSON.parse(localdata);
+                   return  $w("#html1").postMessage({ "get from local storage": "true", "tasks": model.tasks }, '*');
                 }
 
                 return await getMovementTasks();
@@ -96,7 +99,7 @@ $w.onReady(() => {
                     console.log(`WIX_ENV: user is signed in ${useremail}, data in local: ${Promise.resolve(await checkLocal())}`);
                     console.log(`WIX_ENV: transfering from local store to collection...`)
                     let toSave = {
-                        "tasks": localdata,
+                        "tasks": JSON.parse(localdata),
                         "email": useremail
                     };
                     try {
