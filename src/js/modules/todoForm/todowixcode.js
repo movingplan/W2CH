@@ -1,19 +1,17 @@
-import { getTasksBeforeMovePromise } from 'backend/usertasks/services/usertasks.service.jsw'
-import { isValidDate } from 'public/common/helpers.js'
+
 import wixWindow from 'wix-window';
 import wixData from 'wix-data';
 import wixUsers from 'wix-users';
 import  {local}  from 'wix-storage';
 
-   
+ 
+let interval;
 $w.onReady(() => {
-    if (wixWindow.rendering.renderCycle !== 2) {
-        console.log(`rendering cycle: ${wixWindow.rendering.renderCycle}`);
-        return;
-    }
- $w("#html1").postMessage({"ready": "Y"}, "*");
-
- $w("#html1").onMessage(async (event) => {
+ 
+     interval  = setInterval(()=>$w('#html1').postMessage({ready: "Y"}, "*"), 2000);
+    
+    $w("#html1").onMessage(async (event) => {
+       clearInterval(interval);
 
         console.log(console.log('WIX_ENV: data received from APP_ENV', event));
 
@@ -29,10 +27,9 @@ $w.onReady(() => {
         };
         const getMovementTasks = async () => {
             let daysNum = 90;
-            let result = await wixData.query("MovementTasks").eq("days", daysNum).descending("_updatedDate").find();
+            let result =  await wixData.query("MovementTasks").eq("days_before_move", daysNum).descending("_updatedDate").find();
             if (result.items) {
-                await $w("#html1").postMessage({ "tasks": result.items }, "*");
-                return console.log(`WIX_ENV: data sent to APP_ENV getMovementTasks():  ${result.items}`);
+                return await $w("#html1").postMessage({ "tasks": result.items }, "*").then(()=>{console.log(`WIX_ENV: data sent to APP_ENV getMovementTasks():  ${result.items}`)});
             }
         };
 
@@ -42,8 +39,8 @@ $w.onReady(() => {
             }
             let result = await wixData.query("UserTasks").eq("email", emailaddress).descending("_updatedDate").find();
             if (result.items) {
-                await $w("#html1").postMessage({ "tasks": result.items }, "*");
-                return console.log(`WIX_ENV: data sent to APP_ENV getUserTasks():  ${result.items}`);
+              return   await $w("#html1").postMessage({ "tasks": result.items }, "*").then( console.log(`WIX_ENV: data sent to APP_ENV getUserTasks():  ${result.items}`));
+        
             }
         };
         const checkLocal = async () => {
@@ -85,16 +82,16 @@ $w.onReady(() => {
         }
 
         if (receivedData.hasOwnProperty("get")) {
-           
+          
             if (!useremail) {
                 let localdata = await checkLocal();
-                console.log(`WIX_ENV: user not signed in, data in local: ${Promise.resolve(await checkLocal())}`);
+                console.log(`WIX_ENV: user not signed in, data in local: ${localdata}`);
                 if (localdata) {
                     let model = JSON.parse(localdata);
-                   return  $w("#html1").postMessage({ "get from local storage": "true", "tasks": model.tasks }, '*');
+                   return  await $w("#html1").postMessage({ "get from local storage": "true", "tasks": model.tasks }, '*');
                 }
 
-                return await getMovementTasks();
+                return await getMovementTasks().then(res=>console.log(`then ${res}`));
             }
             
             if (useremail) {
@@ -107,7 +104,7 @@ $w.onReady(() => {
                         "email": useremail
                     };
                     try {
-                        wixData.save("UserTasks", toSave)
+                        await wixData.save("UserTasks", toSave)
                             .then(result => $w("#html1").postMessage({ "saved_collection": "true", result }, '*')).then(() => local.removeItem("tasks")).then(() => console.log("WIX_ENV: data transfered to collection and removed from local store"));
                     } catch (err) {
                         console.log(`WIX_APP_SAVE_ERR_COLLECTION: ${err}`)
@@ -117,7 +114,7 @@ $w.onReady(() => {
                    
                 }
                 try {
-                    getUserTasks(useremail).then(result=>$w("#html1").postMessage({ "tasks": result } , "*")).then((e)=>console.log(`get user tasks finished, posted message to APP_ENV ${e}`))
+                    return await getUserTasks(useremail).then(result=>$w("#html1").postMessage({ "tasks": result } , "*")).then((e)=>console.log(`get user tasks finished, posted message to APP_ENV ${e}`))
                     
                 } catch (error) {
                     console.log(`WIX ERROR GET USER TASKS ${error}`);
