@@ -28,6 +28,19 @@ export default class extends app.Controller {
                 }
             }
         });
+        this.bind({
+            '#todo': (el, model, view, controller) => {
+                el.onkeypress = (e) => {
+
+                    let code = (e.keyCode ? e.keyCode : e.which);
+                    console.log(code);
+                    if(code == 13) { //Enter keycode
+                        this.addToDoItem(e);
+                    }
+                }
+            }
+        });
+
        
     }
 
