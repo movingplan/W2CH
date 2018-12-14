@@ -29,18 +29,17 @@ export default class extends app.Controller {
             }
         });
        
-       
     }
+
     sendMessageToWix(jsObj) {
         console.log('APP_ENV: sending to wix:', jsObj)
         window.parent.postMessage(jsObj, "*");
     }
+
     saveItems() {
         let message = { dataToSave: () => this.model.get("tasks").toJSON() };
         this.view.get(".debugArea").innerHTML = JSON.stringify(this.model.get("tasks"));
     }
-
-   
 
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
