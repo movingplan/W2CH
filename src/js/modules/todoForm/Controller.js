@@ -47,7 +47,7 @@ export default class extends app.Controller {
         if (event.data) {
             if ( event.data.hasOwnProperty("ready")) {
                 let data = {
-                    tasks: model,
+                    tasks: this.model.get('tasks'),
                     get : "Y"
                 }
                 this.sendMessageToWix(data);
