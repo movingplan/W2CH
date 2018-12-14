@@ -90,7 +90,7 @@ export default class extends app.Controller {
             tasks: this.model.get('tasks'),
             save : "Y"
         };
-        sendMessageToWix(tosend);
+        this.sendMessageToWix(tosend);
     }
     removeToDoItem(){
         let data = {tasks: this.model.get('tasks')};
@@ -99,7 +99,7 @@ export default class extends app.Controller {
             tasks: data.tasks,
             save : "Y"
         }
-        sendMessageToWix(tosend);
+        this.sendMessageToWix(tosend);
     }
     setModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
@@ -148,7 +148,7 @@ export default class extends app.Controller {
                     tasks: data.tasks,
                     save : "Y"
                 }
-                sendMessageToWix(tosend);
+                this.sendMessageToWix(tosend);
                
             };
         }
@@ -197,7 +197,7 @@ export default class extends app.Controller {
                         tasks: data.tasks,
                         save : "Y"
                     }
-                    sendMessageToWix(tosend);
+                    this.sendMessageToWix(tosend);
                 };
         }
     }
