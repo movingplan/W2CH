@@ -91,7 +91,7 @@ export default class extends app.Controller {
             data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
         } else {
             data.tasks = {'_id': guid, 'title': title, 'state': "custom"};
-            this.model.set({ 'tasks': {'_id': guid, 'title': title, 'state': "custom"} });
+            this.model.set({ 'tasks': [{'_id': guid, 'title': title, 'state': "custom"}] });
         }
 
         console.log('item added, model state:', this.model.get('tasks'));
