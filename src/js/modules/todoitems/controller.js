@@ -9,17 +9,17 @@ import * as ToDoMessage from "./todomessage";
       Methods: `bind()` for DOM selectors
 */
 export default class extends app.Controller {
-    
+
     constructor() {
         super();
-        
+
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
+
         this.model.on('change', (e) => {
-            console.log('model changed from controller ', e);
             this.renderToDoItems();
         });
 
-       
+
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => {
@@ -32,15 +32,15 @@ export default class extends app.Controller {
                 el.onkeypress = (e) => {
 
                     let code = (e.keyCode ? e.keyCode : e.which);
-                   
-                    if(code == 13) { //Enter keycode
+
+                    if (code == 13) { //Enter keycode
                         this.addToDoItem(e);
                     }
                 }
             }
         });
 
-       
+
     }
 
     sendMessageToWix(jsObj) {
@@ -48,34 +48,28 @@ export default class extends app.Controller {
         window.parent.postMessage(jsObj, "*");
     }
 
-    saveItems() {
-        let message = { dataToSave: () => this.model.get("tasks").toJSON() };
-        this.view.get(".debugArea").innerHTML = JSON.stringify(this.model.get("tasks"));
+    prepareModelToSend() {
+        let model = this.model.get('tasks')
+        let data = {
+            tasks: model,
+            get: "Y"
+        }
+        return data;
     }
-
+    isReadyOrSave(event) {
+        return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
+    }
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
-            if ( event.data.hasOwnProperty("ready")) {
-                let model = this.model.get('tasks')
-                let data = {
-                    tasks: model,
-                    get : "Y"
-                }
-                this.sendMessageToWix(data);
+            if (this.isReadyOrSave(event)) {
+                this.sendMessageToWix(prepareModelToSend());
             }
-            if ( event.data.hasOwnProperty("save")) {
-                let model = this.model.get('tasks')
-                let data = {
-                    tasks: model,
-                    save : "Y"
-                }
-                this.sendMessageToWix(data);
-            }
-            if ( event.data.hasOwnProperty("saved")) {
+
+            if (event.data.hasOwnProperty("saved")) {
                 this.model.set('tasks', event.data.tasks);
             }
-            if ( event.data.hasOwnProperty("tasks")) {
+            if (event.data.hasOwnProperty("tasks")) {
                 this.model.set({ 'tasks': event.data.tasks });
             }
         }
@@ -86,49 +80,49 @@ export default class extends app.Controller {
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         )
     }
-
+   
     addToDoItem(el) {
         let title = this.view.get("#todo").value;
-        if(!title) return ;
+        if (!title) return;
         let guid = this.createGuid();
-        let data = {tasks: this.model.get('tasks')};
-        if(data.tasks.length>0){
+        let data = { tasks: this.model.get('tasks') };
+
+        if (data.tasks.length > 0) {
             data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
-        }else{
-            data.tasks = ({ '_id': guid, 'title': title, 'state': "custom" });
+        } else {
+            data.tasks = { '_id': guid, 'title': title, 'state': "custom" };
         }
-     
-       
+
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
-        
-        let tosend = {
+
+       
+        this.sendMessageToWix({
             tasks: this.model.get('tasks'),
-            save : "Y"
-        };
-        this.sendMessageToWix(tosend);
+            save: "Y"
+        });
     }
-    removeToDoItem(){
-        let data = {tasks: this.model.get('tasks')};
-               
+    removeToDoItem() {
+        let data = { tasks: this.model.get('tasks') };
+
         let tosend = {
             tasks: data.tasks,
-            save : "Y"
+            save: "Y"
         }
         this.sendMessageToWix(tosend);
     }
     setModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
         console.log(dataset);
-        let data = {tasks: this.model.get('tasks')};
-         data.tasks.map(function (value, index, arr) {
+        let data = { tasks: this.model.get('tasks') };
+        data.tasks.map(function (value, index, arr) {
             if (value._id === dataset.id) {
                 value.state = dataset.state;
             }
             return value;
         });
         return data;
-        
+
     }
 
     renderToDoItems() {
@@ -163,53 +157,52 @@ export default class extends app.Controller {
                 let data = this.setModelState(e);
                 let tosend = {
                     tasks: data.tasks,
-                    save : "Y"
+                    save: "Y"
                 }
                 this.sendMessageToWix(tosend);
-               
+
             };
         }
-       
 
         let listElements = this.view.getAll("li");
         for (let i = 0; i < listElements.length; i++) {
             listElements[i].onclick = (e) => {
-                    if (e.srcElement.tagName === "SPAN") return;
-                    let li;
-                    let input;
-                    if (e.target.tagName === 'LABEL') {
-                        li = e.srcElement.parentElement;
-                        input = e.srcElement.children[0];
-                    }
-                    if (e.target.tagName === 'SPAN') {
-                        li = e.srcElement.parentElement.parentElement;
-                        input = e.srcElement;
-                    }
-                    if (e.target.tagName === 'INPUT') {
-                        li = e.srcElement.parentElement.parentElement;
-                        input = e.srcElement;
-                    }
-                    if (e.target.tagName === 'LI') {
-                        li = e.srcElement;
-                        input = li.children[0].children[0];
-                    }
+                if (e.srcElement.tagName === "SPAN") return;
+                let li;
+                let input;
+                if (e.target.tagName === 'LABEL') {
+                    li = e.srcElement.parentElement;
+                    input = e.srcElement.children[0];
+                }
+                if (e.target.tagName === 'SPAN') {
+                    li = e.srcElement.parentElement.parentElement;
+                    input = e.srcElement;
+                }
+                if (e.target.tagName === 'INPUT') {
+                    li = e.srcElement.parentElement.parentElement;
+                    input = e.srcElement;
+                }
+                if (e.target.tagName === 'LI') {
+                    li = e.srcElement;
+                    input = li.children[0].children[0];
+                }
 
-                    if (input.checked) {
-                        li.classList.add('checked');
-                        li.dataset.state = "completed";
-                    } else {
-                        li.classList.remove('checked');
-                        li.dataset.state = "default";
-                    }
-                    let data = this.setModelState(e);
-                    let tosend = {
-                        tasks: data.tasks,
-                        save : "Y"
-                    }
-                    this.sendMessageToWix(tosend);
-                };
+                if (input.checked) {
+                    li.classList.add('checked');
+                    li.dataset.state = "completed";
+                } else {
+                    li.classList.remove('checked');
+                    li.dataset.state = "default";
+                }
+                let data = this.setModelState(e);
+                let tosend = {
+                    tasks: data.tasks,
+                    save: "Y"
+                }
+                this.sendMessageToWix(tosend);
+            };
         }
     }
-                
-                    
+
+
 };
