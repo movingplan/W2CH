@@ -66,6 +66,9 @@ export default class extends app.Controller {
     isReadyOrSave(event) {
         return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
+    isSavedOrGet(event) {
+        return event.data.hasOwnProperty("saved") || event.data.hasOwnProperty("tasks");
+    }
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
@@ -73,13 +76,9 @@ export default class extends app.Controller {
                 this.sendMessageToWix(this.prepareModelToSend());
             }
 
-            if (event.data.hasOwnProperty("saved")) {
-                this.model.set('tasks', event.data.tasks,'days': event.data.days);
+            if (this.isSavedOrGet(event)) {
+                this.model.set({'tasks' : event.data.tasks, 'days': event.data.days });
             }
-            if (event.data.hasOwnProperty("tasks")) {
-                this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
-            }
-            
         }
     }
 
