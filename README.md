@@ -12,7 +12,7 @@ Run: `dist/index.html`
 ```
 
 ### Example syntax  
-*todoForm/ToDoItems.js 
+*todoitmes/todoitems.js 
 ```javascript
 import * as app from "../../lib/app";
 import Model from "./Model"
@@ -33,7 +33,7 @@ export default class {
 };
 ```
 
-*toDoForm/Model.js*
+*todoitems/model.js*
 ```javascript
 import * as app from "../../lib/app";
 
@@ -73,7 +73,7 @@ export default class extends app.Model {
 };
 ```
 
-*todoForm/View.js*
+*todoitems/view.js*
 ```javascript
 import * as app from "../../lib/app";
 
@@ -90,13 +90,13 @@ export default class extends app.View {
         super();
 
         // Set DOM ref
-        this.el = document.getElementById("todoform");
+        this.el = document.getElementById("todo");
     }
 
 };
 ```
 
-*todoForm/Controller.js*
+*todoitems/controller.js*
 ```javascript
 import * as app from "../../lib/app";
 
