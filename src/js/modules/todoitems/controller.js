@@ -90,18 +90,19 @@ export default class extends app.Controller {
         if (data.tasks.length > 0) {
             data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
         } else {
-            data.tasks = {'_id': guid, 'title': title, 'state': "custom"};
-            this.model.set({ 'tasks': [{'_id': guid, 'title': title, 'state': "custom"}] });
+            data.tasks = [{'_id': guid, 'title': title, 'state': "custom"}];
+            
         }
 
         console.log('item added, model state:', this.model.get('tasks'));
+        this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
 
        
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     save: "Y"
-        // });
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            save: "Y"
+        });
     }
     removeToDoItem() {
         this.sendMessageToWix({
