@@ -56,6 +56,7 @@ export default class extends app.Controller {
         }
         return data;
     }
+    
     isReadyOrSave(event) {
         return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
