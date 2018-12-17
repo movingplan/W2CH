@@ -6,8 +6,8 @@ Run: `dist/index.html`
 
 ### Get latest version of application link
 ```
- $gitver =  git rev-parse HEAD
-"https://min.gitcdn.link/cdn/movingplan/w2ch/" + {$gitver}+ "/dist/index.html"
+ $gitver =  git rev-parse HEAD 
+"https://min.gitcdn.link/cdn/movingplan/w2ch/" + $gitver + "/dist/index.html"
 ```
 
 ### Example syntax  
@@ -62,7 +62,7 @@ export default class extends app.Model {
 
         // Populate model
         this.set({
-            Tasks: {}
+            tasks: {}
         });
 
         // Also set by path possible
