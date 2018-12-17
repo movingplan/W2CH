@@ -1,7 +1,7 @@
 import Boot from "./modules/boot/boot";
-import ToDoForm from "./modules/todoForm/todoform";
+import ToDoItems from "./modules/todoitems/todoitems";
 
 new Boot()
     .then(() => {
-        new ToDoForm();
+        new ToDoItems();
     });

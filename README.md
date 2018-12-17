@@ -2,12 +2,11 @@
 ### Set up  
 Install: `npm install`  
 Build: `gulp` *(or `gulp dev`/`gulp prod`)*  
-Test: `npm test`  
 Run: `dist/index.html`  
 
 
 ### Example syntax  
-*todoForm/ToDoForm.js 
+*todoForm/ToDoItems.js 
 ```javascript
 import * as app from "../../lib/app";
 import Model from "./Model"
@@ -22,7 +21,7 @@ import Controller from "./Controller"
 export default class {
 
     constructor() {
-        return app.add("toDoForm", Model, View, Controller);
+        return app.add("ToDoItems", Model, View, Controller);
     }
 
 };
@@ -58,11 +57,10 @@ export default class extends app.Model {
 
         // Populate model
         this.set({
-            comment: '',
-            date: Date.now()
+            Tasks: {}
         });
 
-        // Set by path
+        // Also set by path possible
         this.set('user.name', 'Guest');
     }
 
@@ -114,7 +112,7 @@ export default class extends app.Controller {
             if (todo) {
                 todo = `<div>${todo}</div>`;
             }
-            this.view.get('.todosection').innerHTML = todo;
+            this.view.get('#todosection').innerHTML = todo;
         });
 
         // Example 2 way bindings

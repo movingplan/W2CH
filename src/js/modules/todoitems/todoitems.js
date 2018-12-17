@@ -6,12 +6,12 @@ import Controller from "./controller"
 "use strict"
 
 /*
-  Example module
+  todo items
 */
 export default class {
 
     constructor() {
-        return app.add("ToDoForm", Model, View, Controller);
+        return app.add("ToDoItems", Model, View, Controller);
     }
 
 };

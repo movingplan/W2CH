@@ -23,12 +23,10 @@ export default class extends app.Model {
             return props;
         }
 
-        // Set listener
         this.on('setPre', props => this.sanitize(props));
        
         this.set({'tasks': {}});
-        // Set by path
-       // this.set('user.name', 'Guest');
+      
     }
 
 };

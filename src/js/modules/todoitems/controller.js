@@ -13,7 +13,6 @@ export default class extends app.Controller {
     constructor() {
         super();
         
-        //window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
         this.model.on('change', (e) => {
             console.log('model changed from controller ', e);
@@ -95,6 +94,8 @@ export default class extends app.Controller {
         let data = {tasks: this.model.get('tasks')};
         if(data.tasks.length>0){
             data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
+        }else{
+            data.tasks = ({ '_id': guid, 'title': title, 'state': "custom" });
         }
      
        
