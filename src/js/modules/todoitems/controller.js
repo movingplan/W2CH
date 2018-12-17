@@ -131,7 +131,7 @@ export default class extends app.Controller {
         // Click on a close button to hide the current list item
         let model = this.model.get("tasks");
         if (!model) { return; }
-        if(model.days) {
+        if(model.get("days")) {
             this.view.get('.h2-title').innerHTML = `${model.get('days')} before move`;
         }
         let list = Array.prototype.map.call(model, (item) => {
