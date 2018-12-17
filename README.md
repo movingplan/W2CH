@@ -1,5 +1,5 @@
-##
-W2CH Todo application
+## W2CH Todo application
+
 ### Set up  
 Install: `npm install`  
 Build: `gulp` *(or `gulp dev`/`gulp prod`)*  
