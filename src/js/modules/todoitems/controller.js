@@ -87,8 +87,11 @@ export default class extends app.Controller {
         let guid = this.createGuid();
         let data = { tasks: this.model.get('tasks') };
 
-        
+        if (data.tasks.length > 0) {
             data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
+        } else {
+            data.tasks = { '_id': guid, 'title': title, 'state': "custom" };
+        }
 
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
@@ -100,13 +103,10 @@ export default class extends app.Controller {
         });
     }
     removeToDoItem() {
-        let data = { tasks: this.model.get('tasks') };
-
-        let tosend = {
-            tasks: data.tasks,
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
             save: "Y"
-        }
-        this.sendMessageToWix(tosend);
+        });
     }
     setModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
