@@ -132,7 +132,7 @@ export default class extends app.Controller {
         let model = this.model.get("tasks");
         if (!model) { return; }
         if(this.model.get("days")) {
-            this.view.get('.h2-title').innerHTML = `${model.get('days')} before move`;
+            this.view.get('.h2-title').innerHTML = `${this.model.get('days')} before move`;
         }
         let list = Array.prototype.map.call(model, (item) => {
             let _class = "";
