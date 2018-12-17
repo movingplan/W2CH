@@ -7,7 +7,7 @@ Run: `dist/index.html`
 
 ### Get latest version of application link
 ```
- $gitver =  git rev-parse HEAD 
+$gitver =  git rev-parse HEAD 
 "https://min.gitcdn.link/cdn/movingplan/w2ch/" + $gitver + "/dist/index.html"
 ```
 
