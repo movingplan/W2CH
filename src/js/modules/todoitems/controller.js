@@ -27,11 +27,7 @@ export default class extends app.Controller {
                 }
             }
         });
-        this.bind({
-            '.h2-title': (el, model, view, controller) => {
-                el.innerHTML = `BINDING ${model.get('days')}`;
-            }
-        });
+      
 
         this.bind({
             '#todo': (el, model, view, controller) => {
@@ -135,6 +131,9 @@ export default class extends app.Controller {
         // Click on a close button to hide the current list item
         let model = this.model.get("tasks");
         if (!model) { return; }
+        if(model.days) {
+            this.view.get('.h2-title').innerHTML = `${model.get('days')} before move`;
+        }
         let list = Array.prototype.map.call(model, (item) => {
             let _class = "";
             if (item.state === "deleted") {
