@@ -28,6 +28,12 @@ export default class extends app.Controller {
             }
         });
         this.bind({
+            '.h2-title': (el, model, view, controller) => {
+                el.innerHTML = `BINDING ${model.get('days')}`;
+            }
+        });
+
+        this.bind({
             '#todo': (el, model, view, controller) => {
                 el.onkeypress = (e) => {
 
@@ -56,7 +62,7 @@ export default class extends app.Controller {
         }
         return data;
     }
-    
+
     isReadyOrSave(event) {
         return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
@@ -68,11 +74,12 @@ export default class extends app.Controller {
             }
 
             if (event.data.hasOwnProperty("saved")) {
-                this.model.set('tasks', event.data.tasks);
+                this.model.set('tasks', event.data.tasks,'days': event.data.days);
             }
             if (event.data.hasOwnProperty("tasks")) {
-                this.model.set({ 'tasks': event.data.tasks });
+                this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             }
+            
         }
     }
 
