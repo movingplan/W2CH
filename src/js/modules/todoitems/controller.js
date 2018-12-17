@@ -63,7 +63,7 @@ export default class extends app.Controller {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
             if (this.isReadyOrSave(event)) {
-                this.sendMessageToWix(prepareModelToSend());
+                this.sendMessageToWix(this.prepareModelToSend());
             }
 
             if (event.data.hasOwnProperty("saved")) {
