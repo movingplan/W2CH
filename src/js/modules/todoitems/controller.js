@@ -85,27 +85,7 @@ export default class extends app.Controller {
         })
         this.bind({
             '#addBtn': (el, model, view, controller) => {
-                el.onclick = (e) => {
-                    let title = this.view.get("#todo").value;
-                    if (!title) return;
-                    let guid = this.createGuid();
-                    let data = { tasks: this.model.get('tasks') };
-
-                    if (data.tasks.length > 0) {
-                        data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
-                    } else {
-                        data.tasks = [{'_id': guid, 'title': title, 'state': "custom"}];
-                    }
-
-                    console.log('item added, model state:', this.model.get('tasks'));
-                    this.model.set({ 'tasks': data.tasks });
-                    this.view.get("#todo").value = '';
-
-                    this.sendMessageToWix({
-                        tasks: this.model.get('tasks'),
-                        save: "Y"
-                    });
-                }
+                el.onclick = (e) => this.addToDoItem(e);
             }
         });
         this.bind({
@@ -121,7 +101,29 @@ export default class extends app.Controller {
             }
         });
     }
+    addToDoItem(e){
+ 
+            let title = this.view.get("#todo").value;
+            if (!title) return;
+            let guid = this.createGuid();
+            let data = { tasks: this.model.get('tasks') };
 
+            if (data.tasks.length > 0) {
+                data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
+            } else {
+                data.tasks = [{'_id': guid, 'title': title, 'state': "custom"}];
+            }
+
+            console.log('item added, model state:', this.model.get('tasks'));
+            this.model.set({ 'tasks': data.tasks });
+            this.view.get("#todo").value = '';
+
+            this.sendMessageToWix({
+                tasks: this.model.get('tasks'),
+                save: "Y"
+            });
+      
+    }
     sendMessageToWix(jsObj) {
         console.log('APP_ENV: sending to wix:', jsObj)
         window.parent.postMessage(jsObj, "*");
