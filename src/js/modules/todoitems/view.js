@@ -14,14 +14,14 @@ export default class extends app.View {
         this.el = document.getElementById("todosection");
     }
 
-    renderToDoItems(model) {
+    renderToDoItems(todos) {
         // Click on a close button to hide the current list item
         
-        if (!model.tasks) { return; }
-        if(model.days) {
-            this.get('.h2-title').innerHTML = `${model.days} days before move`;
+        if (!todos) { return; }
+        if(todos.days) {
+            this.get('.h2-title').innerHTML = `${todos.days} days before move`;
         }
-        let list = Array.prototype.map.call(model.tasks, (item) => {
+        let list = Array.prototype.map.call(todos, (item) => {
             let _class = "";
             if (item.state === "deleted") {
                 return "";

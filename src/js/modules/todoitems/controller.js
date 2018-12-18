@@ -16,8 +16,8 @@ export default class extends app.Controller {
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
        
         this.model.on('change', (e) => {
-            console.log(`model changed, view ${this.view}, result ${this.view.renderToDoItems(this.model)}`)
-            this.view.renderToDoItems(this.model);
+            console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
+            this.view.renderToDoItems(this.model.get('tasks'));
         });
 
         this.bind({
