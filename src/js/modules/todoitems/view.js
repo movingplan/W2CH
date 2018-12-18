@@ -11,9 +11,10 @@ export default class extends app.View {
 
     constructor() {
         super();
+       
+        // Set DOM ref
         this.el = document.getElementById("todosection");
     }
-
     renderToDoItems(todos) {
         // Click on a close button to hide the current list item
         
@@ -40,5 +41,4 @@ export default class extends app.View {
         this.el = document.getElementById("todosection");
        
     }
-
 };
