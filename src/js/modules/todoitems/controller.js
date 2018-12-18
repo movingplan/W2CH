@@ -1,5 +1,5 @@
 import * as app from "../../lib/app";
-import tasks from "../../json/data";
+import * as data from "../../json/data";
 import * as ToDoMessage from "./todomessage";
 "use strict"
 
@@ -47,7 +47,7 @@ export default class extends app.Controller {
                 }
             }
         });
-        this.model.set({ 'tasks':tasks, days:90});
+        this.model.set({ 'tasks':data.tasks, days:90});
     }
 
     changeToDoItemStatus(e) {
