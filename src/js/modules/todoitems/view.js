@@ -17,7 +17,7 @@ export default class extends app.View {
     renderToDoItems(model) {
         // Click on a close button to hide the current list item
         
-        if (!model) { return; }
+        if (!model.tasks) { return; }
         if(model.days) {
             this.get('.h2-title').innerHTML = `${model.days} days before move`;
         }
