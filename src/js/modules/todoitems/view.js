@@ -37,7 +37,7 @@ export default class extends app.View {
         });
 
         this.get("#todolist").innerHTML = list.join("");
-        
+        this.el = document.getElementById("todosection");
        
     }
 
