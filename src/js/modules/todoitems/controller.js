@@ -14,73 +14,20 @@ export default class extends app.Controller {
         super();
 
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
-       
+
         this.model.on('change', (e) => {
             console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
             this.view.renderToDoItems(this.model.get('tasks'));
         });
 
         this.bind({
-            'span.close' :(close, model,view,controller) => {
-               
-                for (let i = 0; i < close.length; i++) {
-                    close[i].onclick = (e) => {
-                        e.preventDefault();
-                        let li = close[i].parentElement;
-                        li.style.display = "none";
-                        li.dataset.state = "deleted";
-                        let data = this.getModelState(e);
-
-                        this.model.set({ 'tasks': data.tasks });
-    
-                        this.sendMessageToWix({
-                            tasks: this.model.get('tasks'),
-                            save: "Y"
-                        });
-                    };
-                }
+            'span.close': (close, model, view, controller) => {
+                close.onclick = (e) => this.removeToDoItem(e);
             }
         })
         this.bind({
-            'li' :(listElements, model, view, controller) =>{
-                for (let i = 0; i < listElements.length; i++) {
-                    listElements[i].onclick = (e) => {
-                        if (e.srcElement.tagName === "SPAN") return;
-                        let li;
-                        let input;
-                        if (e.target.tagName === 'LABEL') {
-                            li = e.srcElement.parentElement;
-                            input = e.srcElement.children[0];
-                        }
-                        if (e.target.tagName === 'SPAN') {
-                            li = e.srcElement.parentElement.parentElement;
-                            input = e.srcElement;
-                        }
-                        if (e.target.tagName === 'INPUT') {
-                            li = e.srcElement.parentElement.parentElement;
-                            input = e.srcElement;
-                        }
-                        if (e.target.tagName === 'LI') {
-                            li = e.srcElement;
-                            input = li.children[0].children[0];
-                        }
-        
-                        if (input.checked) {
-                            li.classList.add('checked');
-                            li.dataset.state = "completed";
-                        } else {
-                            li.classList.remove('checked');
-                            li.dataset.state = "default";
-                        }
-                        let data = this.getModelState(e);
-                        this.model.set({ 'tasks': data.tasks });
-
-                        this.sendMessageToWix({
-                            tasks: this.model.get('tasks'),
-                            save: "Y"
-                        });
-                    };
-                }
+            'li': (el, model, view, controller) => {
+                el.onclick = (e) => this.changeToDoItemStatus(e);
             }
         })
         this.bind({
@@ -101,28 +48,82 @@ export default class extends app.Controller {
             }
         });
     }
-    addToDoItem(e){
- 
-            let title = this.view.get("#todo").value;
-            if (!title) return;
-            let guid = this.createGuid();
-            let data = { tasks: this.model.get('tasks') };
 
-            if (data.tasks.length > 0) {
-                data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
-            } else {
-                data.tasks = [{'_id': guid, 'title': title, 'state': "custom"}];
-            }
+    changeToDoItemStatus(e) {
+        if (e.srcElement.tagName === "SPAN") return;
+        let li;
+        let input;
+        if (e.target.tagName === 'LABEL') {
+            li = e.srcElement.parentElement;
+            input = e.srcElement.children[0];
+        }
+        if (e.target.tagName === 'SPAN') {
+            li = e.srcElement.parentElement.parentElement;
+            input = e.srcElement;
+        }
+        if (e.target.tagName === 'INPUT') {
+            li = e.srcElement.parentElement.parentElement;
+            input = e.srcElement;
+        }
+        if (e.target.tagName === 'LI') {
+            li = e.srcElement;
+            input = li.children[0].children[0];
+        }
 
-            console.log('item added, model state:', this.model.get('tasks'));
-            this.model.set({ 'tasks': data.tasks });
-            this.view.get("#todo").value = '';
+        if (input.checked) {
+            li.classList.add('checked');
+            li.dataset.state = "completed";
+        } else {
+            li.classList.remove('checked');
+            li.dataset.state = "default";
+        }
+        let data = this.getModelState(e);
+        this.model.set({ 'tasks': data.tasks });
 
-            this.sendMessageToWix({
-                tasks: this.model.get('tasks'),
-                save: "Y"
-            });
-      
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            save: "Y"
+        });
+
+    }
+
+
+    removeToDoItem(e) {
+        e.preventDefault();
+        let li = close[i].parentElement;
+        li.style.display = "none";
+        li.dataset.state = "deleted";
+        let data = this.getModelState(e);
+
+        this.model.set({ 'tasks': data.tasks });
+
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            save: "Y"
+        });
+    }
+    addToDoItem(e) {
+
+        let title = this.view.get("#todo").value;
+        if (!title) return;
+        let guid = this.createGuid();
+        let data = { tasks: this.model.get('tasks') };
+
+        if (data.tasks.length > 0) {
+            data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
+        } else {
+            data.tasks = [{ '_id': guid, 'title': title, 'state': "custom" }];
+        }
+
+        console.log('item added, model state:', this.model.get('tasks'));
+        this.model.set({ 'tasks': data.tasks });
+        this.view.get("#todo").value = '';
+
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            save: "Y"
+        });
+
     }
     sendMessageToWix(jsObj) {
         console.log('APP_ENV: sending to wix:', jsObj)
@@ -152,7 +153,7 @@ export default class extends app.Controller {
             }
 
             if (this.isSavedOrGet(event)) {
-                this.model.set({'tasks' : event.data.tasks, 'days': event.data.days });
+                this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             }
         }
     }
@@ -162,7 +163,7 @@ export default class extends app.Controller {
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         )
     }
-   
+
     getModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
         console.log(dataset);
