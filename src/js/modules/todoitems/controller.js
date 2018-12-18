@@ -1,5 +1,5 @@
 import * as app from "../../lib/app";
-//import * as data from "../../json/data";
+import * as data from "../../json/data";
 import * as ToDoMessage from "./todomessage";
 "use strict"
 
@@ -14,7 +14,7 @@ export default class extends app.Controller {
         super();
 
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
-
+        
         this.model.on('change', (e) => {
             console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
             this.view.renderToDoItems(this.model.get('tasks'));
@@ -47,6 +47,7 @@ export default class extends app.Controller {
                 }
             }
         });
+        this.model.set({tasks, days:90});
     }
 
     changeToDoItemStatus(e) {
