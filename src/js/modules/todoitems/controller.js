@@ -35,7 +35,7 @@ export default class extends app.Controller {
                 el.onclick = (e) => this.addToDoItem(e);
             }
         });
-        
+
         this.bind({
             '#todo': (el, model, view, controller) => {
                 el.onkeypress = (e) => {
@@ -92,7 +92,7 @@ export default class extends app.Controller {
 
     removeToDoItem(e) {
         e.preventDefault();
-        let li = close[i].parentElement;
+        let li = e.currentTarget.parentElement;
         li.style.display = "none";
         li.dataset.state = "deleted";
         let data = this.getModelState(e);
