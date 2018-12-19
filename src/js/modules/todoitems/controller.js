@@ -50,8 +50,7 @@ export default class extends app.Controller {
         });
         this.model.set({ 'tasks':data.tasks, days:90});
     }
-
-    changeToDoItemStatus(e) {
+    changeToDoItemStatus(e)  {
         if (e.srcElement.tagName === "SPAN") return;
         let li;
         let input;

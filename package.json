@@ -40,7 +40,9 @@
   "dependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
-    "gulp-git": "^2.8.0"
+    "gulp-git": "^2.8.0",
+    "gulp-htmlmin": "^5.0.1",
+    "pdfmake": "^0.1.39"
   },
   "babel": {
     "presets": [

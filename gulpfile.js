@@ -14,7 +14,8 @@ let gulp = require('gulp'),
     cleanCSS = require('gulp-clean-css'),
     watch = require('gulp-watch'),
     tap = require('gulp-tap'),
-    git = require('gulp-git');
+    git = require('gulp-git'),
+    htmlmin = require('gulp-htmlmin');
 
 let config = {
         buildType: 'dev',
@@ -55,7 +56,8 @@ gulp.task('prebuild', function(cb) {
 
 gulp.task('html', ['prebuild'], function() {
     return gulp.src('./src/*.html')
-        .pipe(gulp.dest('./dist/'))
+            .pipe(htmlmin({ collapseWhitespace: true }))
+            .pipe(gulp.dest('./dist'));
 });
 
 
@@ -96,19 +98,6 @@ gulp.task('test', ['prebuild'], function() {
     return transpile('./src/test/**/*.js')
         .pipe(gulp.dest('./dist/test/'));
 });
-
-gulp.task('commit', ['prebuild'], function() {
-    let   computeNewVersion = ()=> new Date().toString();
-    return gulp.src(['./src/*', './dist/*'])
-    .pipe(git.commit(() => "Set version: " + computeNewVersion()));
-});
-
-gulp.task('push', ['commit'], function() {
-    git.push('origin', 'master', function (err) {
-        if (err) throw err;
-      });
-});
-
 
 gulp.task('watch', function() {
     gulp.watch('./src/*.html', ['html']);
