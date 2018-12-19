@@ -16,7 +16,8 @@ export default class extends app.Controller {
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
         
         this.model.on('change', (e) => {
-            console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
+            
+            console.log(`model changed, view ${this.view}, `)
             this.view.renderToDoItems(this.model.get('tasks'));
             this.bind({
                 'span.close': (el, model, view, controller) => {
@@ -52,6 +53,7 @@ export default class extends app.Controller {
     }
 
     changeToDoItemStatus(e) {
+
         if (e.srcElement.tagName === "SPAN") return;
         let li;
         let input;
