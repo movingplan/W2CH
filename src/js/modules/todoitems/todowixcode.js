@@ -3,7 +3,7 @@ import wixData from 'wix-data';
 
 
 export async function todoItemsHandleMessage(event, days, component, interval, local) {
-
+    const DATA_KEY = `tasks_${days.days}_${days.days_after_move}`;
     clearInterval(interval);
     console.log(`HELLO days selecteds : ${JSON.stringify(days)}`);
 
@@ -20,7 +20,7 @@ export async function todoItemsHandleMessage(event, days, component, interval, l
         };
 
         const getFromLocal = () => {
-            return local.getItem(`tasks`);
+            return local.getItem(DATA_KEY);
         };
 
         if (receivedData.hasOwnProperty("save")) {
@@ -34,22 +34,22 @@ export async function todoItemsHandleMessage(event, days, component, interval, l
                 movedate: undefined
             };
 
-            local.removeItem(`tasks_${days.days}_${days.days_after_move}`);
-            local.setItem(`tasks_${days.days}_${days.days_after_move}`, JSON.stringify(toSave));
-            let localData = JSON.parse(local.getItem(`tasks`));
-            component.postMessage({ "saved": "true", "tasks": localData, "days": days }, '*');
+            local.removeItem(DATA_KEY);
+            local.setItem(DATA_KEY, JSON.stringify(toSave));
+            let localData = JSON.parse(local.getItem(DATA_KEY));
+            return component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": days }, '*');
         }
 
         if (receivedData.hasOwnProperty("get")) {
 
             let localdata = getFromLocal();
             if (localdata) {
-                let model = JSON.parse(localdata);
-                return component.postMessage({ "get from local storage": "true", "tasks": model, "days": days }, '*');
+                let dataInLocalStorage = JSON.parse(localdata);
+                return component.postMessage({ "get from local storage": "true", "tasks": dataInLocalStorage.tasks, "days": dataInLocalStorage.days }, '*');
             }
 
-            let result =  await getMovementTasks();
-            component.postMessage({ "tasks": result.items }, "*");
+            let result = await getMovementTasks();
+            return component.postMessage({ "tasks": result.items }, "*");
         }
 
     } catch (err) {
