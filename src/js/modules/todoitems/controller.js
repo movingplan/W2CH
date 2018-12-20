@@ -104,11 +104,12 @@ export default class extends app.Controller {
         if (!title) return;
         let guid = this.createGuid();
         let data = { tasks: this.model.get('tasks') };
+        let days = this.model.get('days');
 
         if (data.tasks.length > 0) {
-            data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom" });
+            data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom", "days": days.days, "days_after_move": days.days_after_move });
         } else {
-            data.tasks = [{ '_id': guid, 'title': title, 'state': "custom" }];
+            data.tasks = [{ '_id': guid, 'title': title, 'state': "custom", "days": days.days, "days_after_move": days.days_after_move }];
         }
 
         console.log('item added, model state:', this.model.get('tasks'));
@@ -147,7 +148,7 @@ export default class extends app.Controller {
             }
 
             if (this.fromReadyOrGet(event)) {
-                this.model.set({ 'tasks': event.data.tasks });
+                this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             }
         }
     }

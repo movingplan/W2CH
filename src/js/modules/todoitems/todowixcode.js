@@ -1,12 +1,11 @@
 
 import wixData from 'wix-data';
-//import wixUsers from 'wix-users';
 
 
-export function todoItemsHandleMessage(event, days, component, interval, local) {
+export async function todoItemsHandleMessage(event, days, component, interval, local) {
 
     clearInterval(interval);
-    console.log(`HELLO ${JSON.stringify(event), JSON.stringify(days), component}`);
+    console.log(`HELLO days selecteds : ${JSON.stringify(days)}`);
 
     try {
         let receivedData = event.data;
@@ -16,24 +15,13 @@ export function todoItemsHandleMessage(event, days, component, interval, local) 
         console.log(console.log('WIX_ENV: data received from APP_ENV', event));
 
         const getMovementTasks = async () => {
-            return await wixData.query("MovementTasks").eq("days", days.before).eq("days_after_move", days.after).descending("_updatedDate").find();
+            return await wixData.query("MovementTasks").eq("days", days.days).eq("days_after_move", days.days_after_move).descending("_updatedDate").find();
 
         };
 
         const getFromLocal = () => {
-            let items = local.getItem(`tasks`);
-            console.log(`type of items ${items}`);
-            if (items) {
-                let list = Array.prototype.map.call(items, (item) => {
-                    if (item.days.before === days.before && item.days.after === days.after) {
-                        return item;
-                    }
-                });
-                return list;
-            }
-            return null;
+            return local.getItem(`tasks`);
         };
-
 
         if (receivedData.hasOwnProperty("save")) {
             if (!receivedData.tasks) {
@@ -42,28 +30,26 @@ export function todoItemsHandleMessage(event, days, component, interval, local) 
 
             let toSave = {
                 tasks: tasks,
-                email: undefined
+                email: undefined,
+                movedate: undefined
             };
 
-            local.removeItem(`tasks`);
-            local.setItem(`tasks`, JSON.stringify(toSave));
-            let model = JSON.parse(local.getItem(`tasks`));
-            component.postMessage({ "saved": "true", "tasks": model.tasks }, '*');
-
-
+            local.removeItem(`tasks_${days.days}_${days.days_after_move}`);
+            local.setItem(`tasks_${days.days}_${days.days_after_move}`, JSON.stringify(toSave));
+            let localData = JSON.parse(local.getItem(`tasks`));
+            component.postMessage({ "saved": "true", "tasks": localData, "days": days }, '*');
         }
 
         if (receivedData.hasOwnProperty("get")) {
 
             let localdata = getFromLocal();
-            console.log(`WIX_ENV: user not signed in, data in local: ${localdata}`);
             if (localdata) {
                 let model = JSON.parse(localdata);
-                return component.postMessage({ "get from local storage": "true", "tasks": model.tasks }, '*');
+                return component.postMessage({ "get from local storage": "true", "tasks": model, "days": days }, '*');
             }
 
-            let result = await getMovementTasks();
-            return await component.postMessage({ "tasks": result.items }, "*");
+            let result =  await getMovementTasks();
+            component.postMessage({ "tasks": result.items }, "*");
         }
 
     } catch (err) {
