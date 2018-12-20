@@ -1,6 +1,4 @@
 import * as app from "../../lib/app";
-//import * as data from "../../json/data";
-import * as ToDoMessage from "./todomessage";
 "use strict"
 
 /*
