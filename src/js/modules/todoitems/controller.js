@@ -129,16 +129,14 @@ export default class extends app.Controller {
     }
 
     prepareGetDataFromWix() {
-        let model = this.model.get('tasks')
         let data = {
-            tasks: model,
             get: "Y"
         }
         return data;
     }
 
-    fromSave(event) {
-       return event.data.hasOwnProperty("save");
+    fromReadyOrSave(event) {
+       return  event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
     fromReadyOrGet(event) {
         return event.data.hasOwnProperty("tasks");
@@ -146,11 +144,11 @@ export default class extends app.Controller {
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
-            if (this.fromSave(event)) {
+            if (this.fromReadyOrSave(event)) {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
 
-            if (this.fromReadyOrGet(event)) {
+            if (this.fromGet(event)) {
                 this.model.set({ 'tasks': event.data.tasks });
             }
         }
