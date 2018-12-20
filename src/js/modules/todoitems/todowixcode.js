@@ -5,7 +5,7 @@ import wixData from 'wix-data';
 export async function todoItemsHandleMessage(event, days, component, interval, local) {
     const DATA_KEY = `tasks_${days.days}_${days.days_after_move}`;
     clearInterval(interval);
-    console.log(`HELLO days selecteds : ${JSON.stringify(days)}`);
+    console.log(`HELLO days selected : ${JSON.stringify(days)}`);
 
     try {
         let receivedData = event.data;
@@ -16,7 +16,6 @@ export async function todoItemsHandleMessage(event, days, component, interval, l
 
         const getMovementTasks = async () => {
             return await wixData.query("MovementTasks").eq("days", days.days).eq("days_after_move", days.days_after_move).descending("_updatedDate").find();
-
         };
 
         const getFromLocal = () => {

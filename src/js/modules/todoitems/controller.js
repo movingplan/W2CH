@@ -16,6 +16,7 @@ export default class extends app.Controller {
         this.model.on('change', (e) => {
             console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
             this.view.renderToDoItems(this.model.get('tasks'));
+            this.view.setTitle(this.model.get('days'));
             this.bind({
                 'span.close': (el, model, view, controller) => {
                     el.onclick = (e) => this.removeToDoItem(e);

@@ -14,7 +14,39 @@ export default class extends app.View {
        
         // Set DOM ref
         this.el = document.getElementById("todosection");
+        this.title= document.querySelector("h2-title");
     }
+    setTitle (days){
+        let title;
+        if(days.days ===90  && days.days_after_move ===0){
+            title = `3 Monate vor dem Umzug`;
+        }
+        if(days.days ===30  && days.days_after_move ===0){
+            title = `1 Monat vor dem Umzug`;
+        }
+        if(days.days ===14  && days.days_after_move ===0){
+            title = `2 Wochen vor dem Umzug`;
+        }
+        if(days.days ===1  && days.days_after_move ===0){
+            title = `1 Tag vor dem Umzug`;
+        }
+        if(days.days ===0  && days.days_after_move ===0){
+            title = `Am Umzugstag`;
+        }
+
+        if(days.days ===0  && days.days_after_move ===14){
+            title = `Bis 14 Tage nach dem Umzug`;
+        }
+        if(days.days ===0  && days.days_after_move ===90){
+            title = `Bis 3 Monate nach dem Umzug`;
+        }
+        if(days.days ===0  && days.days_after_move ==300){
+            title = `Bis 12 Monate nach dem Umzug`;
+        }
+
+        this.title.innerHTML = title;
+    }
+    
     renderToDoItems(todos) {
         // Click on a close button to hide the current list item
         
