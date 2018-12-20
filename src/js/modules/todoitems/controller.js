@@ -146,7 +146,7 @@ export default class extends app.Controller {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
 
-            if (this.fromGet(event)) {
+            if (this.fromReadyOrGet(event)) {
                 this.model.set({ 'tasks': event.data.tasks });
             }
         }
