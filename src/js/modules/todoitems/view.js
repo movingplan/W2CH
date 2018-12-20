@@ -18,6 +18,7 @@ export default class extends app.View {
     }
     setTitle (days){
         let title;
+        console.log(`In set title, days: ${days} type of days.days ${days.days}`);
         if(days.days ===90  && days.days_after_move ===0){
             title = `3 Monate vor dem Umzug`;
         }
@@ -44,7 +45,7 @@ export default class extends app.View {
             title = `Bis 12 Monate nach dem Umzug`;
         }
 
-        this.title.innerHTML = title;
+        document.querySelector(".h2-title").innerHTML = title;
     }
 
     renderToDoItems(todos) {
