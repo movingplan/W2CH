@@ -45,7 +45,7 @@ export default class extends app.View {
             title = `Bis 12 Monate nach dem Umzug`;
         }
 
-        document.querySelector(".h2-title").innerHTML = title;
+        this.get(".h2-title").innerHTML = title;
     }
 
     renderToDoItems(todos) {
