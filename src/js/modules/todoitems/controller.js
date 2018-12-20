@@ -14,7 +14,7 @@ export default class extends app.Controller {
         super();
 
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
-        
+
         this.model.on('change', (e) => {
             console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
             this.view.renderToDoItems(this.model.get('tasks'));
@@ -29,7 +29,7 @@ export default class extends app.Controller {
                 }
             })
         });
-       
+
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => this.addToDoItem(e);
@@ -39,37 +39,19 @@ export default class extends app.Controller {
         this.bind({
             '#todo': (el, model, view, controller) => {
                 el.onkeypress = (e) => {
-
                     let code = (e.keyCode ? e.keyCode : e.which);
-
                     if (code == 13) { //Enter keycode
                         this.addToDoItem(e);
                     }
                 }
             }
         });
-        // this.model.set({ 'tasks':data.tasks, days:90});
     }
-    changeToDoItemStatus(e)  {
+    changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
         let li;
         let input;
-        if (e.target.tagName === 'LABEL') {
-            li = e.srcElement.parentElement;
-            input = e.srcElement.children[0];
-        }
-        if (e.target.tagName === 'SPAN') {
-            li = e.srcElement.parentElement.parentElement;
-            input = e.srcElement;
-        }
-        if (e.target.tagName === 'INPUT') {
-            li = e.srcElement.parentElement.parentElement;
-            input = e.srcElement;
-        }
-        if (e.target.tagName === 'LI') {
-            li = e.srcElement;
-            input = li.children[0].children[0];
-        }
+        ({ li, input } = this.getClicked(e, li, input));
 
         if (input.checked) {
             li.classList.add('checked');
@@ -88,6 +70,21 @@ export default class extends app.Controller {
 
     }
 
+    getClicked(e, li, input) {
+        if (e.target.tagName === 'LABEL') {
+            li = e.srcElement.parentElement;
+            input = e.srcElement.children[0];
+        }
+        if (e.target.tagName === 'SPAN' || e.target.tagName === 'INPUT') {
+            li = e.srcElement.parentElement.parentElement;
+            input = e.srcElement;
+        }
+        if (e.target.tagName === 'LI') {
+            li = e.srcElement;
+            input = li.children[0].children[0];
+        }
+        return { li, input };
+    }
 
     removeToDoItem(e) {
         e.preventDefault();
@@ -140,21 +137,21 @@ export default class extends app.Controller {
         return data;
     }
 
-    isReadyOrSave(event) {
-        return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
+    fromSave(event) {
+       return event.data.hasOwnProperty("save");
     }
-    isSavedOrGet(event) {
-        return event.data.hasOwnProperty("saved") || event.data.hasOwnProperty("tasks");
+    fromReadyOrGet(event) {
+        return event.data.hasOwnProperty("tasks");
     }
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
-            if (this.isReadyOrSave(event)) {
+            if (this.fromSave(event)) {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
 
-            if (this.isSavedOrGet(event)) {
-                this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
+            if (this.fromReadyOrGet(event)) {
+                this.model.set({ 'tasks': event.data.tasks });
             }
         }
     }

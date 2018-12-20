@@ -1,11 +1,10 @@
-class default MessageService {
-    constructor(){
-
+export default class MessageService {
+    constructor() {
     }
-    find(params) { },
-    get(id, params) { },
-    create(data, params) { },
-    update(id, data, params) { },
-    patch(id, data, params) { },
-    remove(id, params) { }
+    find(params) { };
+    get(id, params) { };
+    create(data, params) { };
+    update(id, data, params) { };
+    patch(id, data, params) { };
+    remove(id, params) { };
 }
