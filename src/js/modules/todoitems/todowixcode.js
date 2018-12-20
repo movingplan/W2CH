@@ -36,7 +36,7 @@ export async function todoItemsHandleMessage(event, days, component, interval, l
             local.removeItem(DATA_KEY);
             local.setItem(DATA_KEY, JSON.stringify(toSave));
             let localData = JSON.parse(local.getItem(DATA_KEY));
-            return component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": days }, '*');
+            return await component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": days }, '*');
         }
 
         if (receivedData.hasOwnProperty("get")) {
@@ -44,11 +44,11 @@ export async function todoItemsHandleMessage(event, days, component, interval, l
             let localdata = getFromLocal();
             if (localdata) {
                 let dataInLocalStorage = JSON.parse(localdata);
-                return component.postMessage({ "get from local storage": "true", "tasks": dataInLocalStorage.tasks, "days": dataInLocalStorage.days }, '*');
+                return await component.postMessage({ "get from local storage": "true", "tasks": dataInLocalStorage.tasks, "days": days }, '*');
             }
 
             let result = await getMovementTasks();
-            return component.postMessage({ "tasks": result.items }, "*");
+            return await component.postMessage({ "tasks": result.items ,  "days": days },"*");
         }
 
     } catch (err) {
