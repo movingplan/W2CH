@@ -14,7 +14,7 @@ export default class extends app.View {
        
         // Set DOM ref
         this.el = document.getElementById("todosection");
-        this.title= document.querySelector("h2-title");
+        this.title= document.querySelector(".h2-title");
     }
     setTitle (days){
         let title;
@@ -46,7 +46,7 @@ export default class extends app.View {
 
         this.title.innerHTML = title;
     }
-    
+
     renderToDoItems(todos) {
         // Click on a close button to hide the current list item
         
