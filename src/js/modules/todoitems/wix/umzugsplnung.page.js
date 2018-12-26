@@ -8,10 +8,11 @@ const getDays = async (before, after) => {
 }
 
 async function countOfCompleted(repeatedElement, before, after) {
-    handler = await new MessageHandler(undefined, await getDays(30, 0), undefined, undefined);
-    repeatedElement.text = await handler.countOfCompleted();
+    handler = await new MessageHandler(undefined, await getDays(before, after), undefined, undefined);
+    repeatedElement.text =  await handler.countOfCompleted();
     await repeatedElement.show();
 }
+
 let refreshPage = async ($item, itemData, index) => {
 
     let repeatedElement = $item("#text99");
