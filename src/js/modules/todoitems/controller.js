@@ -1,4 +1,5 @@
 import * as app from "../../lib/app";
+import * as ToDoViewModel  from "../todoitems/todoviewmodel";
 "use strict"
 
 /*
@@ -14,9 +15,10 @@ export default class extends app.Controller {
         window.onmessage = event => { this.registerOnMessageReceivedHandler(event) };
 
         this.model.on('change', (e) => {
-            console.log(`model changed, view ${this.view}, model toJSON: ${JSON.stringify(this.model.toJSON())}`)
-            this.view.renderToDoItems(this.model.get('tasks'));
+            console.log(`model changed, view ${this.view}`)
             this.view.setTitle(this.model.get('days'));
+            this.view.renderToDoItems(this.model.get('tasks'));
+
             this.bind({
                 'span.close': (el, model, view, controller) => {
                     el.onclick = (e) => this.removeToDoItem(e);
@@ -86,43 +88,50 @@ export default class extends app.Controller {
     }
 
     removeToDoItem(e) {
-        e.preventDefault();
-        let li = e.currentTarget.parentElement;
-        li.style.display = "none";
-        li.dataset.state = "deleted";
-        let data = this.getModelState(e);
-
-        this.model.set({ 'tasks': data.tasks });
+        let dataset = this.view.removeItem(e);
+        let tasks = this.model.get('tasks');
+        this.model.set({
+            'tasks': tasks.map(function (value, index, arr) {
+                if (value._id === dataset.id) {
+                    value.state = dataset.state;
+                }
+                return value;
+            })
+        });
 
         this.sendMessageToWix({
             tasks: this.model.get('tasks'),
             save: "Y"
         });
     }
-    addToDoItem(e) {
 
+    addToDoItem(e) {
         let title = this.view.get("#todo").value;
         if (!title) return;
-        let guid = this.createGuid();
+        let todo = new ToDoViewModel.default(this.model.get('days'), title, "custom");
+
         let data = { tasks: this.model.get('tasks') };
-        let days = this.model.get('days');
+
 
         if (data.tasks.length > 0) {
-            data.tasks.unshift({ '_id': guid, 'title': title, 'state': "custom", "days": days.days, "days_after_move": days.days_after_move });
+            data.tasks.unshift(todo);
         } else {
-            data.tasks = [{ '_id': guid, 'title': title, 'state': "custom", "days": days.days, "days_after_move": days.days_after_move }];
+            data.tasks = [todo];
         }
+        
+        this.view.addItem(todo);
 
         console.log('item added, model state:', this.model.get('tasks'));
+
         this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
-
         this.sendMessageToWix({
             tasks: this.model.get('tasks'),
             save: "Y"
         });
 
     }
+
     sendMessageToWix(jsObj) {
         console.log('APP_ENV: sending to wix:', jsObj)
         window.parent.postMessage(jsObj, "*");
@@ -136,9 +145,9 @@ export default class extends app.Controller {
     }
 
     fromReadyOrSave(event) {
-       return  event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
+        return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
-    fromReadyOrGet(event) {
+    fromTasks(event) {
         return event.data.hasOwnProperty("tasks");
     }
     registerOnMessageReceivedHandler(event) {
@@ -148,21 +157,16 @@ export default class extends app.Controller {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
 
-            if (this.fromReadyOrGet(event)) {
+            if (this.fromTasks(event)) {
                 this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             }
         }
     }
 
-    createGuid() {
-        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-        )
-    }
+
 
     getModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
-        console.log(dataset);
         let data = { tasks: this.model.get('tasks') };
         data.tasks.map(function (value, index, arr) {
             if (value._id === dataset.id) {
@@ -173,5 +177,6 @@ export default class extends app.Controller {
         return data;
 
     }
+
 
 };
