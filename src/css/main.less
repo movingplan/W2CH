@@ -5,16 +5,20 @@
     font-family: Roboto;
     font-weight: 200;
 }
-
+body{
+  margin:0;
+}
 .header {
-    background-color: #66cc00;
-    padding: 10px;
-    color: white;
-    text-align: center;
-    margin-bottom: 0px;
-    position: fixed;
-    top: 0;
-    width: 100%;
+  position: fixed;
+  background-color: #6c0;
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 0;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  margin-top: 0px;
 }
 
 .header:after {
@@ -24,11 +28,12 @@
 }
 
 .footer {
+    position: fixed;
     background-color: #66cc00;
     padding: 10px;
     color: white;
     text-align: center;
-    position: fixed;
+   
     bottom: 0;
     width: 100%;
 }
@@ -42,13 +47,13 @@
 }
 
 .content {
-    position: relative;
-    
-    width: 100%;
-    height: calc(100% - 80px);
-    top: 70px;
-    overflow-y: auto;
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 125px);
+  top: 45px;
+  overflow-y: visible;
 }
+
 
 /* Remove margins and padding from the list */
 
