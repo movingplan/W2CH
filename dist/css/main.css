@@ -4,6 +4,44 @@
   font-family: Roboto;
   font-weight: 200;
 }
+.header {
+  background-color: #66cc00;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  margin-bottom: 0px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.footer {
+  background-color: #66cc00;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+/* Clear floats after the footer */
+.footer:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.content {
+  position: relative;
+  border: 1px solid #000000;
+  width: 100%;
+  height: calc(20%);
+  top: 70px;
+  overflow-y: auto;
+}
 /* Remove margins and padding from the list */
 ul {
   margin: 0;
@@ -29,14 +67,6 @@ ul li.checked {
 ul li label.checked {
   text-decoration: line-through;
 }
-ul li label * {
-  font-family: Roboto;
-  font-weight: 200;
-}
-.todo-item-title {
-  font-family: Roboto;
-  font-weight: 200;
-}
 /* Style the close button */
 .close {
   position: absolute;
@@ -47,20 +77,6 @@ ul li label * {
 .close:hover {
   background-color: #66cc00;
   color: white;
-}
-/* Style the header */
-.header {
-  background-color: #66cc00;
-  padding: 10px;
-  color: white;
-  text-align: center;
-  margin-bottom: 0px;
-}
-/* Clear floats after the header */
-.header:after {
-  content: "";
-  display: table;
-  clear: both;
 }
 /* Style the input */
 input {
@@ -122,7 +138,7 @@ input {
   width: 20px;
   background-color: #eee;
 }
-/* When the checkbox is checked, add a blue background */
+/* When the checkbox is checked, add a green background */
 .checkbox-container input:checked ~ .checkmark {
   background-color: #66cc00;
 }
