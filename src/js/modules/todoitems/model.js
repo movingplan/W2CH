@@ -25,7 +25,7 @@ export default class extends app.Model {
 
         this.on('setPre', props => this.sanitize(props));
        
-        this.set({'tasks': {}});
+        //this.set({'tasks': {}});
         this.set({'days' : {days:90, days_after_move:0}});
     }
 

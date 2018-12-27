@@ -1,5 +1,5 @@
 import * as app from "../../lib/app";
-import * as ToDoViewModel  from "../todoitems/todoviewmodel";
+import * as ToDoViewModel from "../todoitems/todoviewmodel";
 "use strict"
 
 /*
@@ -118,7 +118,7 @@ export default class extends app.Controller {
         } else {
             data.tasks = [todo];
         }
-        
+
         this.view.addItem(todo);
 
         console.log('item added, model state:', this.model.get('tasks'));
@@ -167,13 +167,15 @@ export default class extends app.Controller {
 
     getModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
-        let data = { tasks: this.model.get('tasks') };
-        data.tasks.map(function (value, index, arr) {
-            if (value._id === dataset.id) {
-                value.state = dataset.state;
-            }
-            return value;
-        });
+        let data = { tasks: this.model.get('tasks') } || { tasks: {} };
+        if (data.tasks) {
+            data.tasks.map(function (value, index, arr) {
+                if (value._id === dataset.id) {
+                    value.state = dataset.state;
+                }
+                return value;
+            });
+        }
         return data;
 
     }

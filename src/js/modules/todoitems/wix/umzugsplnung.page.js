@@ -4,7 +4,7 @@ import { MessageHandler } from 'public/todoitems/services/todoitems.service.js'
 let handler;
 
 const getDays = async (before, after) => {
-    return await { days: { 'days': before, 'days_after_move': after } }
+    return { days: { 'days': before, 'days_after_move': after } }
 }
 
 async function countOfCompleted(repeatedElement, before, after) {

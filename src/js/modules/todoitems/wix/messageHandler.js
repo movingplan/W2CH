@@ -7,7 +7,9 @@ export class MessageHandler {
 		this.event = event;
 		this.days = days.days;
 		this.component = component;
-        this.interval = interval;
+		if(interval){
+			clearInterval(interval);
+		}
 		let user = wixUsers.currentUser;
 		let isLoggedIn = user.loggedIn;
 		if (isLoggedIn) {
@@ -18,7 +20,9 @@ export class MessageHandler {
 			this.init();
 		}
 	}
-  
+    async clearItem(){
+		return this.repository.clearAll(`tasks_${this.days.days}_${this.days.days_after_move}`);
+	}
 	async countOfCompleted() {
 		return this.repository.countOfCompleted(this.days);
 	}
