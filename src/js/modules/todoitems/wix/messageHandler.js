@@ -10,12 +10,7 @@ export class MessageHandler {
 		if(interval){
 			clearInterval(interval);
 		}
-		let user = wixUsers.currentUser;
-		let isLoggedIn = user.loggedIn;
-		if (isLoggedIn) {
-			this.repository = new RepositoryFactory("checkList").get();
-		}
-		this.repository = new RepositoryFactory("checkListLocal").get(`tasks_${this.days.days}_${this.days.days_after_move}`);
+		this.repository = RepositoryFactory.get(this.days);
 		if (event) {
 			this.init();
 		}

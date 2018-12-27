@@ -30,6 +30,7 @@ export class CheckListRepository {
 	}
 
 }
+
 export class CheckListRepositoryLocal {
 
 	constructor(dataKey) {
