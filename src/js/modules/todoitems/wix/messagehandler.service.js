@@ -1,7 +1,7 @@
-import { RepositoryFactory } from 'public/todoitems/services/repositoryfactory.js'
+import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory.js'
 import wixUsers from 'wix-users';
 
-export class MessageHandler {
+export class MessageHandlerService {
 
 	 constructor(event, days, component, interval) {
 		this.event = event;
@@ -27,7 +27,7 @@ export class MessageHandler {
 			let tasks = this.event.data.tasks;
 			console.log(console.log('WIX_ENV: data received from APP_ENV', this.event.data));
 
-			if (this.event.data.hasOwnProperty("save")) {
+			if (this.event.data.hasOwnProperty("POST")) {
 				if (!tasks) {
 					throw new Error(`Tasks were not sent to wix : received data: ${this.event.data}`);
 				}
@@ -41,7 +41,7 @@ export class MessageHandler {
 				return await this.component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": this.days }, '*');
 			}
 
-			if (this.event.data.hasOwnProperty("get")) {
+			if (this.event.data.hasOwnProperty("GET")) {
 				let localdata = await this.repository.get();
 				if (localdata) {
 					let dataLs = JSON.parse(localdata);

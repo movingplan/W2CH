@@ -66,7 +66,7 @@ export default class extends app.Controller {
 
         this.sendMessageToWix({
             tasks: this.model.get('tasks'),
-            save: "Y"
+            POST: "POST"
         });
 
     }
@@ -101,7 +101,7 @@ export default class extends app.Controller {
 
         this.sendMessageToWix({
             tasks: this.model.get('tasks'),
-            save: "Y"
+            POST: "POST"
         });
     }
 
@@ -127,7 +127,7 @@ export default class extends app.Controller {
         this.view.get("#todo").value = '';
         this.sendMessageToWix({
             tasks: this.model.get('tasks'),
-            save: "Y"
+            POST: "POST"
         });
 
     }
@@ -139,7 +139,7 @@ export default class extends app.Controller {
 
     prepareGetDataFromWix() {
         let data = {
-            get: "Y"
+            GET: "GET"
         }
         return data;
     }
