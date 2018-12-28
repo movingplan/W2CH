@@ -1,6 +1,9 @@
 import wixWindow from 'wix-window';
 import { local } from 'wix-storage';
-import { MessageHandler } from 'public/todoitems/services/todoitems.service.js'
+import { MessageHandlerService as MessageHandler } from 'public/todoitems/services/messagehandler.service.js'
+import wixUsers from 'wix-users';
+import wixLocation from 'wix-location';
+import wixData from 'wix-data'
 
 function onMessageHandler(days, component, interval) {
 	let handler;
@@ -15,10 +18,10 @@ $w.onReady(() => {
 		interval = setInterval(() => component.postMessage({ ready: "Y" }, "*"), 2000);
 		let days = wixWindow.lightbox.getContext(); // {days, days_after_move}
 		component.onMessage(onMessageHandler(days, component, interval));
-		
         
 	} catch (err) {
 		console.log(`Error ${JSON.stringify(err)}`);
 	}
 
 });
+

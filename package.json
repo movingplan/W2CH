@@ -1,7 +1,7 @@
 {
-  "name": "react-project-template",
+  "name": "to-do-items",
   "version": "1.0.0",
-  "description": "React project template",
+  "description": "Wix independend application",
   "main": "app.js",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start"
