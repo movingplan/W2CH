@@ -11,37 +11,64 @@ export default class extends app.View {
 
     constructor() {
         super();
-       
+
         // Set DOM ref
         this.el = document.getElementById("todosection");
-        this.title= document.querySelector(".h2-title");
+        this.title = document.querySelector(".h2-title");
+
     }
-    setTitle (days){
-        let title;
-        console.log(`In set title, days: ${days} type of days.days ${days.days}`);
-        if(days.days ===90  && days.days_after_move ===0){
+
+    removeItem(e) {
+        e.preventDefault();
+        let li = e.currentTarget.parentElement;
+        li.style.display = "none";
+        li.dataset.state = "deleted";
+        return li.dataset;
+    }
+
+    addItem(item) {
+        this.list = document.querySelector("#todolist");
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = this.renderToDoItem(item);
+        var li = wrapper.firstChild;
+
+        if (this.list.childNodes[0]) {
+            this.list.insertBefore(li, this.list.childNodes[0]);
+        } else {
+            this.list.appendChild(li);
+        }
+    }
+
+    confirmItem(yesNo) {
+
+    }
+
+    setTitle(days) {
+
+        let title = `3 Monate vor dem Umzug`;
+        if (days.days === 90 && days.days_after_move === 0) {
             title = `3 Monate vor dem Umzug`;
         }
-        if(days.days ===30  && days.days_after_move ===0){
+        if (days.days === 30 && days.days_after_move === 0) {
             title = `1 Monat vor dem Umzug`;
         }
-        if(days.days ===14  && days.days_after_move ===0){
+        if (days.days === 14 && days.days_after_move === 0) {
             title = `2 Wochen vor dem Umzug`;
         }
-        if(days.days ===1  && days.days_after_move ===0){
+        if (days.days === 1 && days.days_after_move === 0) {
             title = `1 Tag vor dem Umzug`;
         }
-        if(days.days ===0  && days.days_after_move ===0){
+        if (days.days === 0 && days.days_after_move === 0) {
             title = `Am Umzugstag`;
         }
 
-        if(days.days ===0  && days.days_after_move ===14){
+        if (days.days === 0 && days.days_after_move === 14) {
             title = `Bis 14 Tage nach dem Umzug`;
         }
-        if(days.days ===0  && days.days_after_move ===90){
+        if (days.days === 0 && days.days_after_move === 90) {
             title = `Bis 3 Monate nach dem Umzug`;
         }
-        if(days.days ===0  && days.days_after_move ==300){
+        if (days.days === 0 && days.days_after_move == 300) {
             title = `Bis 12 Monate nach dem Umzug`;
         }
 
@@ -50,28 +77,30 @@ export default class extends app.View {
 
     renderToDoItems(todos) {
         // Click on a close button to hide the current list item
-        
+
         if (!todos) { return; }
-        if(todos.days) {
+        if (todos.days) {
             this.get('.h2-title').innerHTML = `${todos.days} days before move`;
         }
         let list = Array.prototype.map.call(todos, (item) => {
-            let _class = "";
-            if (item.state === "deleted") {
-                return "";
+            if(item.state !=="deleted"){
+                return this.renderToDoItem(item)
             }
-            if (item.state === "completed") {
-                _class = "checked";
-            }
-            return `<li data-state="${!item.state ? "default" : item.state}" data-id="${item._id}" class="${_class ? "checked" : ""}">
-                        <label class="checkbox-container ${_class}"> 
-                            <input type="checkbox" ${_class ? "checked" : ""} class="${_class ? "checked" : ""}"><span class="todo-item-title">${item.title}</span><span class="checkmark"></span> 
-                        </label><span class="close">×</span>
-                    </li>`
         });
 
         this.get("#todolist").innerHTML = list.join("");
-        this.el = document.getElementById("todosection");
-       
     }
-};
+
+
+    renderToDoItem(item) {
+        let checked = item.state === "completed" ? "checked" : "";
+        return `<li data-state="${!item.state ? "default" : item.state}" data-id="${item._id}" class="${checked}">
+                    <label class="checkbox-container ${checked}"> 
+                        <input type="checkbox" ${checked} class="${checked}">
+                        <span class="todo-item-title">${item.title}</span><span class="checkmark"></span> 
+                    </label>
+                    <span class="close">×</span>
+                </li>`;
+    }
+
+}

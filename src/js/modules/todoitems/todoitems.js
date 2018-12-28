@@ -5,9 +5,6 @@ import Controller from "./controller"
 
 "use strict"
 
-/*
-  todo items
-*/
 export default class {
 
     constructor() {

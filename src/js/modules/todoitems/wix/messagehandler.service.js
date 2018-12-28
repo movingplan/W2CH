@@ -1,24 +1,23 @@
-import { RepositoryFactory } from 'public/todoitems/services/repositoryfactory.js'
+import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory.js'
 import wixUsers from 'wix-users';
 
-export class MessageHandler {
+export class MessageHandlerService {
 
 	 constructor(event, days, component, interval) {
 		this.event = event;
 		this.days = days.days;
 		this.component = component;
-        this.interval = interval;
-		let user = wixUsers.currentUser;
-		let isLoggedIn = user.loggedIn;
-		if (isLoggedIn) {
-			this.repository = new RepositoryFactory("checkList").get();
+		if(interval){
+			clearInterval(interval);
 		}
-		this.repository = new RepositoryFactory("checkListLocal").get(`tasks_${this.days.days}_${this.days.days_after_move}`);
+		this.repository = RepositoryFactory.get(this.days);
 		if (event) {
 			this.init();
 		}
 	}
-  
+    async clearItem(){
+		return this.repository.clearAll(`tasks_${this.days.days}_${this.days.days_after_move}`);
+	}
 	async countOfCompleted() {
 		return this.repository.countOfCompleted(this.days);
 	}
@@ -28,7 +27,7 @@ export class MessageHandler {
 			let tasks = this.event.data.tasks;
 			console.log(console.log('WIX_ENV: data received from APP_ENV', this.event.data));
 
-			if (this.event.data.hasOwnProperty("save")) {
+			if (this.event.data.hasOwnProperty("POST")) {
 				if (!tasks) {
 					throw new Error(`Tasks were not sent to wix : received data: ${this.event.data}`);
 				}
@@ -42,7 +41,7 @@ export class MessageHandler {
 				return await this.component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": this.days }, '*');
 			}
 
-			if (this.event.data.hasOwnProperty("get")) {
+			if (this.event.data.hasOwnProperty("GET")) {
 				let localdata = await this.repository.get();
 				if (localdata) {
 					let dataLs = JSON.parse(localdata);
