@@ -141,7 +141,6 @@ input {
 
 .checkbox-container {
     width: auto;
-    /* float: left;*/
     margin-right: 10px;
     font-family: Roboto;
     font-weight: 200;
@@ -212,13 +211,15 @@ input {
 }
 
 .page-loader {
- 
-    display: -webkit-box;
+  margin:0;
+  position: absolute;
+  width:100%;
+   display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     align-items: center;
     justify-content: center;
-    height:  ~"calc(100% - 110px)";
+    height:  ~"calc(100% - 20px)";
     svg {
         width: 150px;
         height: 150px;
