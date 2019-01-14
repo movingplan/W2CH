@@ -3,17 +3,21 @@ import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory
 
 export class MainService {
     constructor(days) {
-       this.repository = RepositoryFactory.get(days);
+        this.days = days;
+		this.repository =  RepositoryFactory.get(days);
     }
-
-    async registerForApprovalAndTransfer() {
+    async registerForApprovalAndTransfer(user) {
         try {
-            let register = await this.repository.registerForApproval({ 'token': this.user.id, 'email': this.email });
-            let toSave = await JSON.parse(this.repositoryLocal.get());
-            await this.repository.save({ email: this.email, tasks: toSave });
+            let email = await user.getEmail();
+            await this.repository.registerForApproval({ 'token': user.id, 'email': email });
+            let toSave = await JSON.parse(this.repository.get());
+            await this.repository.transfer({ email: email, tasks: toSave });
+            return await this.repositoryLocal.clearAll();
         } catch (err) {
             console.log(`an err was issued ${err.message} ${err.stack}`);
         }
 
     }
+
+    
 }

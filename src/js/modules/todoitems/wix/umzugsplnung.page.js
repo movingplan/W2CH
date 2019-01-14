@@ -1,15 +1,17 @@
 import wixWindow from 'wix-window';
-import { MessageHandlerService as MessageHandler } from 'public/todoitems/services/messagehandler.service.js'
+import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory.js'
 
 let handler;
 
 const getDays = async (before, after) => {
-	return { days: { 'days': before, 'days_after_move': after } }
+	return  { 'days': before, 'days_after_move': after };
 }
 
 async function countOfCompleted(repeatedElement, before, after) {
-	handler = await new MessageHandler(undefined, await getDays(before, after), undefined, undefined);
-	repeatedElement.text = await handler.countOfCompleted();
+	let days = await getDays(before, after);
+	let repository = await RepositoryFactory.get(days);
+    console.log(repository, repeatedElement,before,after);
+	repeatedElement.text = await repository.countOfCompleted();
 	await repeatedElement.show();
 }
 
@@ -42,7 +44,6 @@ const openLightBox = async (before, after, target) => {
 	let interval = setInterval(() => { $w("#repeater1").forEachItem(refreshPage) }, 1000);
 	await wixWindow.openLightbox("Checklist_3Month", await getDays(before, after));
 	clearInterval(interval);
-	let msg = new MessageHandler(undefined, await getDays(before, after), undefined, undefined).clearItem();
 	$w("#repeater1").forEachItem(refreshPage);
 };
 
@@ -72,5 +73,3 @@ $w.onReady(function () {
 	$w("#repeater1").forEachItem(refreshPage);
 
 });
-
-

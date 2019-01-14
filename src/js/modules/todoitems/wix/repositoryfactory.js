@@ -1,7 +1,7 @@
-import { CheckListRepository, CheckListRepositoryLocal } from "public/todoitems/repository/checklists.js";
+import { CheckListRepository, CheckListRepositoryLocal } from "public/todoitems/repository/repositories.js";
 import wixUsers from 'wix-users';
 export class RepositoryFactory {
-	constructor(name) {
+constructor(name) {
 		this.name = name;
 		this.repositories = [
 			{ name: "checkList", source: () => new CheckListRepository() },
@@ -17,13 +17,14 @@ export class RepositoryFactory {
 		}
 		return fn[0].source;
 	}
-	static get(days) {
+	static get( days ) { 
 		let user = wixUsers.currentUser;
-		if (user) {
-			if (user.loggedIn) {
-				return new RepositoryFactory("checkList")();
-			}
+		if(user) {
+		let isLoggedIn = user.loggedIn;
+		if (isLoggedIn) {
+			return new RepositoryFactory("checkList")();
 		}
+	}
 		return new RepositoryFactory("checkListLocal")(`tasks_${days.days}_${days.days_after_move}`);
 	}
 }

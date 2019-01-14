@@ -1,8 +1,7 @@
-import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory.js'
 import wixUsers from 'wix-users';
-
+import {MainService} from 'public/todoitems/services/main.service.js'
+import {RepositoryFactory} from 'public/todoitems/repository/repositoryfactory.js'
 export class MessageHandlerService {
-
 	 constructor(event, days, component, interval) {
 		this.event = event;
 		this.days = days.days;
@@ -10,16 +9,10 @@ export class MessageHandlerService {
 		if(interval){
 			clearInterval(interval);
 		}
-		this.repository = RepositoryFactory.get(this.days);
+		this.repository = RepositoryFactory.get(days);
 		if (event) {
 			this.init();
 		}
-	}
-    async clearItem(){
-		return this.repository.clearAll(`tasks_${this.days.days}_${this.days.days_after_move}`);
-	}
-	async countOfCompleted() {
-		return this.repository.countOfCompleted(this.days);
 	}
 
 	async init() {
