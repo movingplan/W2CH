@@ -3,21 +3,38 @@ import { local } from 'wix-storage';
 
 export class CheckListRepository {
 
-	async get() {}
+	async get() { }
 
-	async list(params, callback) {
-		callback = callback || {};
+	async list(params) {
 		let query = wixData.query("UserTasks")
 		Object.keys(params).map((key) => {
 			query = query.eq(key, params[key]);
 		});
-		return query.descending("_updatedDate").find();
+		return await query.descending("_updatedDate").find();
 	}
 
-	async save() {
-
+	async save(toSave) {
+		return await wixData.save("UserTasks", toSave);
 	}
 
+	async transfer(toSave) {
+		try {
+			if (!toSave) {
+				throw new Error("there is nothing to save");
+			}
+			return await this.save(toSave);
+		} catch (err) {
+			console.log(`an err was issued ${err.message} ${err.stack}`);
+		}
+	}
+
+	async registerForApproval(toSave) {
+		try {
+			return await wixData.insert("AccountConfirmation", toSave);
+		} catch (err) {
+			console.log(`an err was issued ${err.message} ${err.stack}`);
+		}
+	}
 	async countOfCompleted(days) {
 		let count = 0,
 			total = 0;
@@ -37,11 +54,16 @@ export class CheckListRepositoryLocal {
 		this.DATA_KEY = dataKey;
 	}
 
+	async transfer() {
+		throw new Error("method not implemented");
+	}
+
 	async get() {
 		return local.getItem(this.DATA_KEY);
 	}
-	async clearAll (dataKey){
-		return local.removeItem(dataKey);
+
+	async clearAll() {
+		return local.removeItem(this.DATA_KEY);
 	}
 	async list(params, callback) {
 		callback = callback || {};
@@ -66,7 +88,7 @@ export class CheckListRepositoryLocal {
 		if (items) {
 			let data = JSON.parse(items);
 			total = data.tasks.length;
-			
+
 			let completed = data.tasks.filter((item) => item.state === 'completed');
 			count = completed.length;
 			console.log(`CountOfCompleted: ${count} of ${total}`);
