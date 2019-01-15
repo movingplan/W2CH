@@ -160,6 +160,7 @@ export default class extends app.Controller {
             if (this.fromTasks(event)) {
                 this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             }
+            this.view.setTitle(this.model.get('days'));
         }
     }
 
