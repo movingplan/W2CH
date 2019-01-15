@@ -43,7 +43,7 @@ export default class extends app.View {
     }
 
     setTitle(days) {
-        console.log(`days ${days}`);
+        console.log(`days ${JSON.stringify(days)}`);
         let title = `3 Monate vor dem Umzug`;
         if (days.days === 90 && days.days_after_move === 0) {
             title = `3 Monate vor dem Umzug`;
