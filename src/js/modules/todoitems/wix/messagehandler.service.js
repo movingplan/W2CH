@@ -4,7 +4,7 @@ import {RepositoryFactory} from 'public/todoitems/repository/repositoryfactory.j
 export class MessageHandlerService {
 	 constructor(event, days, component, interval) {
 		this.event = event;
-		this.days = days.days;
+		this.days = days;
 		this.component = component;
 		if(interval){
 			clearInterval(interval);

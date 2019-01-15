@@ -42,7 +42,8 @@ let refreshPage = async ($item, itemData, index) => {
 
 const openLightBox = async (before, after, target) => {
 	let interval = setInterval(() => { $w("#repeater1").forEachItem(refreshPage) }, 1000);
-	await wixWindow.openLightbox("Checklist_3Month", await getDays(before, after));
+	let days = await getDays(before, after);
+	await wixWindow.openLightbox("Checklist_3Month", days);
 	clearInterval(interval);
 	$w("#repeater1").forEachItem(refreshPage);
 };
