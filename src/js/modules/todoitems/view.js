@@ -15,7 +15,6 @@ export default class extends app.View {
         // Set DOM ref
         this.el = document.getElementById("todosection");
         this.title = document.querySelector(".h2-title");
-
     }
 
     removeItem(e) {
@@ -44,7 +43,7 @@ export default class extends app.View {
     }
 
     setTitle(days) {
-
+        console.log(`days ${days}`);
         let title = `3 Monate vor dem Umzug`;
         if (days.days === 90 && days.days_after_move === 0) {
             title = `3 Monate vor dem Umzug`;
@@ -61,7 +60,6 @@ export default class extends app.View {
         if (days.days === 0 && days.days_after_move === 0) {
             title = `Am Umzugstag`;
         }
-
         if (days.days === 0 && days.days_after_move === 14) {
             title = `Bis 14 Tage nach dem Umzug`;
         }

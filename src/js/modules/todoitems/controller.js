@@ -147,25 +147,16 @@ export default class extends app.Controller {
     fromReadyOrSave(event) {
         return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
-    fromTasks(event) {
-        return event.data.hasOwnProperty("tasks");
-    }
+   
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
+            this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             if (this.fromReadyOrSave(event)) {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
-
-            if (this.fromTasks(event)) {
-                this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
-            }
-            this.view.setTitle(this.model.get('days'));
         }
     }
-
-
-
     getModelState(el) {
         let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
         let data = { tasks: this.model.get('tasks') } || { tasks: {} };
@@ -178,8 +169,5 @@ export default class extends app.Controller {
             });
         }
         return data;
-
     }
-
-
 };
