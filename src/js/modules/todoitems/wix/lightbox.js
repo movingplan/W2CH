@@ -4,9 +4,9 @@ import { MessageHandlerService as MessageHandler } from 'public/todoitems/servic
 import wixUsers from 'wix-users';
 import wixLocation from 'wix-location';
 import wixData from 'wix-data'
-
+let handler;
 function onMessageHandler(days, component, interval) {
-	let handler;
+
 	return function (event) {
 		handler = new MessageHandler(event, days, component, interval);
 	}

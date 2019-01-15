@@ -13,15 +13,15 @@ export class CheckListRepository {
 		return query.descending("_updatedDate").find();
 	}
 
-	async save( toSave ) {
-       throw new Error("nothing implemented");
-	}
-
-	async transfer( toSave ) {
+	async save(toSave) {
 		throw new Error("nothing implemented");
 	}
 
-	async registerForApproval( toSave ) {
+	async transfer(toSave) {
+		throw new Error("nothing implemented");
+	}
+
+	async registerForApproval(toSave) {
 		throw new Error("nothing implemented");
 	}
 	async countOfCompleted(days) {
@@ -42,8 +42,8 @@ export class CheckListRepositoryLocal {
 	constructor(dataKey) {
 		this.DATA_KEY = dataKey;
 	}
-	
-	async registerForApproval( toSave ) {
+
+	async registerForApproval(toSave) {
 		try {
 			return await wixData.insert("AccountConfirmation", toSave);
 		} catch (err) {
@@ -51,7 +51,7 @@ export class CheckListRepositoryLocal {
 		}
 	}
 
-	async transfer( userTasks ) {
+	async transfer(userTasks) {
 		try {
 			if (!userTasks) {
 				throw new Error("there is nothing to save");
@@ -61,7 +61,7 @@ export class CheckListRepositoryLocal {
 			console.log(`an err was issued ${err.message} ${err.stack}`);
 		}
 	}
-	
+
 	async get() {
 		return local.getItem(this.DATA_KEY);
 	}
@@ -87,9 +87,10 @@ export class CheckListRepositoryLocal {
 			total = 0;
 
 		let items = await this.get(this.DATA_KEY);
+
 		if (items) {
 			let data = JSON.parse(items);
-			total = data.tasks.length;
+			total = data.tasks.filter(item => item.state !== 'deleted').length;
 
 			let completed = data.tasks.filter((item) => item.state === 'completed');
 			count = completed.length;
