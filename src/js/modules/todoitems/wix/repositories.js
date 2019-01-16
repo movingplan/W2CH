@@ -34,13 +34,13 @@ export class CheckListRepository {
 		}
 		return `${count} of ${total}`
 	}
-
 }
 
 export class CheckListRepositoryLocal {
 
-	constructor(dataKey) {
-		this.DATA_KEY = dataKey;
+	constructor(days) {
+		this.DATA_KEY = `tasks_${days.days}_${days.days_after_move}`;
+		this.days = days;
 	}
 
 	async registerForApproval(toSave) {
@@ -68,7 +68,7 @@ export class CheckListRepositoryLocal {
 	async clearAll() {
 		return local.removeItem(this.DATA_KEY);
 	}
-	async list(params, callback) {
+	async list(params) {
 		let query = wixData.query("MovementTasks")
 		Object.keys(params).map((key) => {
 			query = query.eq(key, params[key]);
@@ -91,10 +91,20 @@ export class CheckListRepositoryLocal {
 		if (items) {
 			let data = JSON.parse(items);
 			total = data.tasks.filter(item => item.state !== 'deleted').length;
-
 			let completed = data.tasks.filter((item) => item.state === 'completed');
 			count = completed.length;
 			console.log(`CountOfCompleted: ${count} of ${total}`);
+		}
+
+		if (count === 0 && total === 0) {
+			let days = this.days;
+			let result = await this.list(days);
+
+
+			if (result.items.length > 0) {
+				total = result.items.filter(item => item.state !== 'deleted').length;
+				count = result.items.filter(item => item.state === 'completed').length;
+			}
 		}
 		return `${count} of ${total}`
 	}

@@ -4,7 +4,7 @@ import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory
 let handler;
 
 const getDays = async (before, after) => {
-	return  { 'days': before, 'days_after_move': after };
+	return { 'days': before, 'days_after_move': after };
 }
 
 async function countOfCompleted(repeatedElement, before, after) {
@@ -18,7 +18,7 @@ let refreshPage = async ($item, itemData, index) => {
 
 	let repeatedElement = $item("#text99");
 	let id = itemData._id;
-	
+
 	if (id === "item1") {
 		await countOfCompleted(repeatedElement, 30, 0);
 	}
@@ -39,6 +39,22 @@ let refreshPage = async ($item, itemData, index) => {
 
 };
 
+let refreshPage2 = async ($item, itemData, index) => {
+
+	let repeatedElement = $item("#text103");
+	let id = itemData._id;
+
+	if (id === "item1") {
+		await countOfCompleted(repeatedElement, 0, 14);
+	}
+	if (id === "item2") {
+		await countOfCompleted(repeatedElement, 0, 90);
+	}
+	if (id === "item3") {
+		await countOfCompleted(repeatedElement, 0, 300);
+	}
+};
+
 const openLightBox = async (before, after, target) => {
 	let interval = setInterval(() => { $w("#repeater1").forEachItem(refreshPage) }, 1000);
 	await wixWindow.openLightbox("Checklist_3Month", await getDays(before, after));
@@ -48,8 +64,7 @@ const openLightBox = async (before, after, target) => {
 
 $w.onReady(function () {
 	$w('#button2').onClick((e) => {
-		console.log(`id ${e.context.additionalData.itemId}`);
-			if (e.context.additionalData.itemId === "item1") {
+		if (e.context.additionalData.itemId === "item1") {
 			openLightBox(0, 14, e.target);
 		}
 		if (e.context.additionalData.itemId === "item2") {
@@ -57,11 +72,11 @@ $w.onReady(function () {
 		}
 
 		if (e.context.additionalData.itemId === "item3") {
-			openLightBox(0,300, e.target);
+			openLightBox(0, 300, e.target);
 		}
 	});
-	
-	
+
+
 	$w('#button3').onClick((e) => {
 		console.log(`id ${e.context.additionalData.itemId}`);
 		if (e.context.additionalData.itemId === "item1") {
@@ -85,5 +100,5 @@ $w.onReady(function () {
 	});
 
 	$w("#repeater1").forEachItem(refreshPage);
-
+	$w("#repeater2").forEachItem(refreshPage2);
 });
