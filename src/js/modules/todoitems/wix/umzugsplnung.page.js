@@ -10,7 +10,6 @@ const getDays = async (before, after) => {
 async function countOfCompleted(repeatedElement, before, after) {
 	let days = await getDays(before, after);
 	let repository = await RepositoryFactory.get(days);
-    console.log(repository, repeatedElement,before,after);
 	repeatedElement.text = await repository.countOfCompleted();
 	await repeatedElement.show();
 }
@@ -19,7 +18,7 @@ let refreshPage = async ($item, itemData, index) => {
 
 	let repeatedElement = $item("#text99");
 	let id = itemData._id;
-
+	
 	if (id === "item1") {
 		await countOfCompleted(repeatedElement, 30, 0);
 	}
@@ -42,15 +41,29 @@ let refreshPage = async ($item, itemData, index) => {
 
 const openLightBox = async (before, after, target) => {
 	let interval = setInterval(() => { $w("#repeater1").forEachItem(refreshPage) }, 1000);
-	let days = await getDays(before, after);
-	await wixWindow.openLightbox("Checklist_3Month", days);
+	await wixWindow.openLightbox("Checklist_3Month", await getDays(before, after));
 	clearInterval(interval);
 	$w("#repeater1").forEachItem(refreshPage);
 };
 
 $w.onReady(function () {
+	$w('#button2').onClick((e) => {
+		console.log(`id ${e.context.additionalData.itemId}`);
+			if (e.context.additionalData.itemId === "item1") {
+			openLightBox(0, 14, e.target);
+		}
+		if (e.context.additionalData.itemId === "item2") {
+			openLightBox(0, 90, e.target);
+		}
 
+		if (e.context.additionalData.itemId === "item3") {
+			openLightBox(0,300, e.target);
+		}
+	});
+	
+	
 	$w('#button3').onClick((e) => {
+		console.log(`id ${e.context.additionalData.itemId}`);
 		if (e.context.additionalData.itemId === "item1") {
 			openLightBox(30, 0, e.target);
 		}

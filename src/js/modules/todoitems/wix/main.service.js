@@ -3,6 +3,9 @@ import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory
 
 export class MainService {
     constructor(days) {
+        if(!days){
+            throw new Error("Days param were not provided....")
+        }
         this.days = days;
 		this.repository =  RepositoryFactory.get(days);
     }
