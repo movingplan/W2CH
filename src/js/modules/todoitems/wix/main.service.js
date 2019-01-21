@@ -10,49 +10,49 @@ export class MainService {
         }
         this.days = days;
         this.repository = RepositoryFactory.get(days);
-        this.key = `tasks_${days}_${days_after_move}`;
+        this.key = `tasks_${days.days}_${days.days_after_move}`;
     }
-    async setMoveDate (moveDate){
+    async setMoveDate(moveDate) {
         try {
             let user = wixUsers.currentUser;
             let email = await user.getEmail();
-            if(email){
-             return await this.repository.setMoveDate({email, moveDate});
+            if (email) {
+                return await this.repository.setMoveDate({ email, moveDate });
             }
         } catch (e) {
-            console.log(`an err was issued ${err.message} ${err.stack}`);
+            console.log(`an err was issued ${e.message} ${e.stack}`);
         }
-      
+
     }
-    async get(){
+    async get() {
         let key = this.key;
         return await this.repository.get(key);
     }
-    async save (toSave){
+    async save(toSave) {
         let user = wixUsers.currentUser;
         let email = await user.getEmail();
-        if(email) {
-           let key = this.key;
-            let toSave = {tasks: toSave.tasks, email, key};
-            return await this.repository.save(toSave);
+        if (email) {
+            let key = this.key;
+            let toInsert = { tasks: toSave.tasks, email, key };
+            return await this.repository.save(toInsert);
         }
         return await this.repository.save(toSave);
     }
     async approveUser(query) {
         if (query.token) {
             let userForApproval = await this.repository.getUserForApproval({ token: query.token });
-            if (await userNotApproved(userForApproval, token)) {
+            if (await userNotApproved(userForApproval, query.token)) {
                 userForApproval.registrationConfirmation = true;
-                return await this.repository.approveUser ( userForApproval );
+                return await this.repository.approveUser(userForApproval);
             }
         }
         async function userNotApproved(userForApproval, token) {
             return userForApproval.length === 1 && userForApproval.token === token && userForApproval.reqistrationConfirmation === false;
         }
     }
-    
-    async getLocalTasks (email)  {
-        async function getcheckListFromLocal(email) {
+
+    async getLocalTasks(email) {
+        async function getcheckListFromLocal() {
             let res = this.repository.getAllPredefinedTasks();
             if (res.items.length > 0) {
                 let keys = new Set(res.items.map(item => `tasks_${item.days}_${item.days_after_move}`));
@@ -70,7 +70,7 @@ export class MainService {
         if (!email) {
             throw new Error("Email was not defined");
         }
-        let items = await getcheckListFromLocal(email);
+        let items = await getcheckListFromLocal();
         if (items.length > 0) {
             return await items;
         }

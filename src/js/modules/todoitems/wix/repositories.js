@@ -1,6 +1,6 @@
 import wixData from 'wix-data';
 import { local } from 'wix-storage';
-
+import wixUsers from 'wix-users';
 export class CheckListRepository {
 	constructor(days) {
 		this.days = days;
@@ -21,7 +21,7 @@ export class CheckListRepository {
 				return await wixData.bulkUpdate("UserTasks", checkLists);
 			}
 		} catch (e) {
-			console.log(`an err was issued ${err.message} ${err.stack}`);
+			console.log(`an err was issued ${e.message} ${e.stack}`);
 		}
 	}
 
@@ -31,8 +31,7 @@ export class CheckListRepository {
 			if (userTasks.items.length === 1) {
 				return await userTasks.items[0].tasks;
 			}
-		} catch (e) {
-		}
+		} catch (e) {}
 	}
 
 	async get(params, collection) {
@@ -43,29 +42,21 @@ export class CheckListRepository {
 			});
 			return await query.find();
 		} catch (e) {
-			console.log(`an err was issued ${err.message} ${err.stack}`);
+			console.log(`an err was issued ${e.message} ${e.stack}`);
 		}
 
 	}
 
-	async list(params) {
-		let query = wixData.query("UserTasks")
-		Object.keys(params).map((key) => {
-			query = query.eq(key, params[key]);
-		});
-		return query.descending("_updatedDate").find();
-	}
-
 	async save(toSave) {
 		try {
-			let todo = this.get({ email: toSave.email, key: entity.key }, "UserTasks");
+			let todo = this.get({ email: toSave.email, key: toSave.key }, "UserTasks");
 			if (todo.items.length === 1) {
 				todo.tasks = toSave.tasks;
 				return await wixData.update("UserTasks", todo);
 			}
 			return await wixData.save("UserTasks", toSave);
 		} catch (e) {
-			console.log(`an err was issued ${err.message} ${err.stack}`);
+			console.log(`an err was issued ${e.message} ${e.stack}`);
 		}
 	}
 
@@ -74,7 +65,7 @@ export class CheckListRepository {
 			if (!userTasks) {
 				throw new Error("there is nothing to save");
 			}
-			let userTasksExist = await this.list({ email: userTasks.email });
+			let userTasksExist = await this.get({ email: userTasks.email }, "UserTasks");
 			if (userTasksExist.items.length === 0) {
 				return await wixData.bulkSave("UserTasks", userTasks);
 			}
@@ -91,15 +82,32 @@ export class CheckListRepository {
 		}
 	}
 	async countOfCompleted(days) {
-		let count = 0,
-			total = 0;
-		let result = await this.list(days);
-		if (result.items.length > 0) {
-			total = result.items.length;
-			//count = result.items.tasks.filter((item) => item.state === 'completed').length;
+		let key = `tasks_${days.days}_${days.days_after_move}`;
+		let user = wixUsers.currentUser;
+		let email = await user.getEmail();
+		if (!email) return;
+		let data = this.get({ key, email }, "UserTasks");
+		if (data.items.length === 1) {
+			let tasks = data.items[0].tasks;
+			let obj = JSON.parse(tasks);
+			let count = obj.filter(item => item.state === 'completed').length;
+			let total = obj.filter(item => item.state !== 'deleted').length;
+			return `${count} of ${total}`
 		}
+
+		let result = await this.get(days, "MovementTasks");
+
+		let total = 0,
+			count = 0;
+
+		if (result.items.length > 0) {
+			total = result.items.filter(item => item.state !== 'deleted').length;
+			count = result.items.filter(item => item.state === 'completed').length;
+		}
+
 		return `${count} of ${total}`
 	}
+
 }
 
 export class CheckListRepositoryLocal {
@@ -116,14 +124,25 @@ export class CheckListRepositoryLocal {
 	async transfer(userTasks) {
 		throw new Error("not implemented in repository local");
 	}
+	async get(params, collection) {
+		try {
+			let query = wixData.query(collection)
+			Object.keys(params).map((key) => {
+				query = query.eq(key, params[key]);
+			});
+			return await query.find();
+		} catch (e) {
+			console.log(`an err was issued ${e.message} ${e.stack}`);
+		}
 
+	}
 	async get() {
 		let localdata = local.getItem(this.DATA_KEY);
 		if (localdata) {
 			let todos = JSON.parse(localdata);
 			return await { items: todos.tasks };
 		}
-		let result = await this.repository.list(this.days);
+		let result = await this.repository.get(this.days, "MovementTasks");
 		return await result;
 	}
 
@@ -134,15 +153,8 @@ export class CheckListRepositoryLocal {
 		try {
 			return await wixData.query("MovementTasks").find()
 		} catch (e) {
-			console.log(`an err was issued ${err.message} ${err.stack}`);
+			console.log(`an err was issued ${e.message} ${e.stack}`);
 		}
-	}
-	async list(params) {
-		let query = wixData.query("MovementTasks")
-		Object.keys(params).map((key) => {
-			query = query.eq(key, params[key]);
-		});
-		return query.descending("_updatedDate").find();
 	}
 
 	async save(entity) {
@@ -167,8 +179,7 @@ export class CheckListRepositoryLocal {
 
 		if (count === 0 && total === 0) {
 			let days = this.days;
-			let result = await this.list(days);
-
+			let result = await this.get(days, "MovementTasks");
 
 			if (result.items.length > 0) {
 				total = result.items.filter(item => item.state !== 'deleted').length;
