@@ -4,7 +4,7 @@ export class RepositoryFactory {
 	constructor(name) {
 		this.name = name;
 		this.repositories = [
-			{ name: "checkList", source: () => new CheckListRepository() },
+			{ name: "checkList", source: (key) => new CheckListRepository(key) },
 			{ name: "checkListLocal", source: (key) => new CheckListRepositoryLocal(key) }
 		];
 		let fn = this.repositories.filter(function (repo) {
@@ -17,7 +17,11 @@ export class RepositoryFactory {
 		}
 		return fn[0].source;
 	}
-	static get(days) {
+
+	static get( days ) {
+		if (wixUsers.currentUser.loggedIn) {
+			return new RepositoryFactory("checkList")(days);	
+		}
 		return new RepositoryFactory("checkListLocal")(days);
 	}
 }

@@ -9,7 +9,7 @@ export class MessageHandlerService {
 		if(interval){
 			clearInterval(interval);
 		}
-		this.repository = RepositoryFactory.get(days);
+		this.mainService = new MainService(days);
 		if (event) {
 			this.init();
 		}
@@ -26,21 +26,14 @@ export class MessageHandlerService {
 				}
 
 				let entity = {
-					tasks: tasks,
-					email: undefined,
-					movedate: undefined
+					tasks: tasks
 				};
-				let localData = await this.repository.save(entity);
+				let localData = await this.mainService.save(entity);
 				return await this.component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": this.days }, '*');
 			}
 
 			if (this.event.data.hasOwnProperty("GET")) {
-				let localdata = await this.repository.get();
-				if (localdata) {
-					let dataLs = JSON.parse(localdata);
-					return await this.component.postMessage({ "get from local storage": "true", "tasks": dataLs.tasks, "days": this.days }, '*');
-				}
-				let result = await this.repository.list(this.days);
+				let result = await this.mainService.get();
 				return await this.component.postMessage({ "tasks": result.items, "days": this.days }, "*");
 			}
 
