@@ -4,37 +4,25 @@ import { MessageHandlerService as MessageHandler } from 'public/todoitems/servic
 import wixUsers from 'wix-users';
 import wixLocation from 'wix-location';
 import wixData from 'wix-data'
-import {MainService} from 'public/todoitems/services/main.service.js'
+import { MainService } from 'public/todoitems/services/main.service.js'
 
-let handler;
-function onMessageHandler(days, component, interval) {
-
-	return function (event) {
-		handler = new MessageHandler(event, days, component, interval);
-	}
-}
-let interval;
-$w.onReady(() => {
-	try {
-		let component = $w("#html1");
-		let days = wixWindow.lightbox.getContext(); // {days, days_after_move}
-		console.log(`lightbox days ${days}`);
-		interval = setInterval(() => component.postMessage({ ready: "Y",days }, "*"), 2000);
-		component.onMessage(onMessageHandler(days, component, interval));
-	} catch (err) {
-		console.log(`Error ${JSON.stringify(err)}`);
-	}
+$w.onReady(function () {
+	//TODO: write your page related code here...
 
 });
-export async function button11_click(event) {
+export async function button1_click(event) {
 	try {
-        
-        let user = await wixUsers.promptLogin( {"mode": "signup"});
-        await wixUsers.emailUser('Verify', user.id, {	variables: { "approvalToken": user.id}});
-        await new MainService(wixWindow.lightbox.getContext()).registerForApprovalAndTransfer(user);
+
+		let user = await wixUsers.promptLogin({ "mode": "signup", "lang": "de" });
+		console.log(`after promt`, user, wixWindow.lightbox.getContext());
+		let days = { days: 90, days_after_move: 0 };
+		let ms = new MainService(days);
+		await ms.registerForApprovalAndTransfer();
+		await wixUsers.emailUser('Verify', user.id, { variables: { "approvalToken": user.id } });
 		await wixLocation.to("/verification");
-		
-    } catch (err) {
-        console.log(`${err.message} ${err.stack}`)
-    }
+
+	} catch (err) {
+		console.log(`${err.message} ${err.stack}`)
+	}
+
 }

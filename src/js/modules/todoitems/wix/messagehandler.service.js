@@ -1,6 +1,4 @@
-import wixUsers from 'wix-users';
 import {MainService} from 'public/todoitems/services/main.service.js'
-import {RepositoryFactory} from 'public/todoitems/repository/repositoryfactory.js'
 export class MessageHandlerService {
 	 constructor(event, days, component, interval) {
 		this.event = event;
@@ -28,12 +26,13 @@ export class MessageHandlerService {
 				let entity = {
 					tasks: tasks
 				};
-				let localData = await this.mainService.save(entity);
+				let localData = await this.mainService.save( entity );
 				return await this.component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": this.days }, '*');
 			}
 
 			if (this.event.data.hasOwnProperty("GET")) {
 				let result = await this.mainService.get();
+				
 				return await this.component.postMessage({ "tasks": result.items, "days": this.days }, "*");
 			}
 

@@ -1,21 +1,22 @@
 import wixData from 'wix-data';
 import { local } from 'wix-storage';
 import wixUsers from 'wix-users';
+
 export class CheckListRepository {
 	constructor(days) {
 		this.days = days;
+		this.key = `tasks_${days.days}_${days.days_after_move}`;
 	}
-	//let userForApproval = repository.get({token:query.token, "AccountConfirmation"});
 	async approveUser(userForApproval) {
 		return await wixData.save("AccountConfirmation", userForApproval);
 	}
 	async getUserForApproval(token) {
-		return await this.get({ token: token }, "AccountConfirmation");
+		return await this.find({ token: token }, "AccountConfirmation");
 	}
 	async setMoveDate(emailAndDate) {
 		let [email, moveDate] = emailAndDate;
 		try {
-			let checkLists = this.get({ email: email }, "UserTasks");
+			let checkLists = this.find({ email: email }, "UserTasks");
 			if (checkLists.items.length > 0) {
 				checkLists.forEach(item => item.moveDate = moveDate);
 				return await wixData.bulkUpdate("UserTasks", checkLists);
@@ -25,16 +26,7 @@ export class CheckListRepository {
 		}
 	}
 
-	async get(filter) {
-		try {
-			let userTasks = this.get(filter, "UserTasks");
-			if (userTasks.items.length === 1) {
-				return await userTasks.items[0].tasks;
-			}
-		} catch (e) {}
-	}
-
-	async get(params, collection) {
+	async find(params, collection) {
 		try {
 			let query = wixData.query(collection)
 			Object.keys(params).map((key) => {
@@ -49,10 +41,11 @@ export class CheckListRepository {
 
 	async save(toSave) {
 		try {
-			let todo = this.get({ email: toSave.email, key: toSave.key }, "UserTasks");
+			
+			let todo = await this.find({ email: toSave.email, key: toSave.key }, "UserTasks");
 			if (todo.items.length === 1) {
-				todo.tasks = toSave.tasks;
-				return await wixData.update("UserTasks", todo);
+				todo.items[0].tasks = toSave.tasks;
+				return await wixData.update("UserTasks", todo.items[0]);
 			}
 			return await wixData.save("UserTasks", toSave);
 		} catch (e) {
@@ -60,13 +53,17 @@ export class CheckListRepository {
 		}
 	}
 
-	async transfer(userTasks) {
+	async transfer(userTasks, email) {
 		try {
 			if (!userTasks) {
 				throw new Error("there is nothing to save");
 			}
-			let userTasksExist = await this.get({ email: userTasks.email }, "UserTasks");
+
+			let userTasksExist = await this.find({ email }, "UserTasks");
+			console.log(`in transfer ${userTasksExist.items} length ${userTasksExist.items.length}`);
+
 			if (userTasksExist.items.length === 0) {
+				console.log(`before save ${JSON.stringify(userTasks), userTasksExist}`);
 				return await wixData.bulkSave("UserTasks", userTasks);
 			}
 		} catch (err) {
@@ -81,21 +78,22 @@ export class CheckListRepository {
 			console.log(`an err was issued ${err.message} ${err.stack}`);
 		}
 	}
-	async countOfCompleted(days) {
-		let key = `tasks_${days.days}_${days.days_after_move}`;
+	async countOfCompleted() {
+		let days = this.days;
 		let user = wixUsers.currentUser;
 		let email = await user.getEmail();
 		if (!email) return;
-		let data = this.get({ key, email }, "UserTasks");
+		let data = await this.find({ "key": this.key, "email": email }, "UserTasks");
 		if (data.items.length === 1) {
 			let tasks = data.items[0].tasks;
-			let obj = JSON.parse(tasks);
+
+			let obj = [...(tasks)];
 			let count = obj.filter(item => item.state === 'completed').length;
 			let total = obj.filter(item => item.state !== 'deleted').length;
 			return `${count} of ${total}`
 		}
 
-		let result = await this.get(days, "MovementTasks");
+		let result = await this.find(days, "MovementTasks");
 
 		let total = 0,
 			count = 0;
@@ -107,7 +105,25 @@ export class CheckListRepository {
 
 		return `${count} of ${total}`
 	}
+	async getAllPredefinedTasks() {
+		try {
+			return await wixData.query("MovementTasks").find()
+		} catch (e) {
+			console.log(`an err was issued ${e.message} ${e.stack}`);
+		}
+	}
+	async get(email) {
+		let key = this.key;
+		let wixcol = await this.find({"email": email, "key":key}, "UserTasks");
+		console.log(wixcol);
+		if (wixcol.items.length === 1) {
+			let res = wixcol.items[0].tasks;
+			return await {items:(res)};
+		}
+		let result = await this.find(this.days, "MovementTasks");
+		return result;
 
+	}
 }
 
 export class CheckListRepositoryLocal {
@@ -124,7 +140,7 @@ export class CheckListRepositoryLocal {
 	async transfer(userTasks) {
 		throw new Error("not implemented in repository local");
 	}
-	async get(params, collection) {
+	async find(params, collection) {
 		try {
 			let query = wixData.query(collection)
 			Object.keys(params).map((key) => {
@@ -138,12 +154,16 @@ export class CheckListRepositoryLocal {
 	}
 	async get() {
 		let localdata = local.getItem(this.DATA_KEY);
+	
 		if (localdata) {
+			
 			let todos = JSON.parse(localdata);
-			return await { items: todos.tasks };
+			return await { items: todos };
 		}
-		let result = await this.repository.get(this.days, "MovementTasks");
-		return await result;
+		
+		let days = this.days;
+		return await this.find(days, "MovementTasks");
+
 	}
 
 	async clearAll() {
@@ -151,41 +171,42 @@ export class CheckListRepositoryLocal {
 	}
 	async getAllPredefinedTasks() {
 		try {
-			return await wixData.query("MovementTasks").find()
+			return await wixData.query("MovementTasks").find();
 		} catch (e) {
 			console.log(`an err was issued ${e.message} ${e.stack}`);
 		}
 	}
 
 	async save(entity) {
-		local.removeItem(this.DATA_KEY);
-		local.setItem(this.DATA_KEY, JSON.stringify(entity));
-		return JSON.parse(local.getItem(this.DATA_KEY));
+		try {
+			local.removeItem(this.DATA_KEY);
+			local.setItem(this.DATA_KEY, JSON.stringify(entity));
+			return await JSON.parse(local.getItem(this.DATA_KEY));
+		} catch (err) {
+			console.log(`error save in local ${err}`);
+		}
+
 	}
 
 	async countOfCompleted() {
 		let count = 0,
 			total = 0;
 
-		let items = await this.get(this.DATA_KEY);
+		let res = await this.get();
+		try {
+			if (res) {
+				let data = res.items;
 
-		if (items) {
-			let data = JSON.parse(items);
-			total = data.tasks.filter(item => item.state !== 'deleted').length;
-			let completed = data.tasks.filter((item) => item.state === 'completed');
-			count = completed.length;
-			console.log(`CountOfCompleted: ${count} of ${total}`);
-		}
+				total = data.filter(item => item.state !== 'deleted').length;
+				let completed = data.filter((item) => item.state === 'completed');
+				count = completed.length;
 
-		if (count === 0 && total === 0) {
-			let days = this.days;
-			let result = await this.get(days, "MovementTasks");
-
-			if (result.items.length > 0) {
-				total = result.items.filter(item => item.state !== 'deleted').length;
-				count = result.items.filter(item => item.state === 'completed').length;
 			}
+
+			return `${count} of ${total}`
+		} catch (err) {
+			console.log(err);
 		}
-		return `${count} of ${total}`
+
 	}
 }
