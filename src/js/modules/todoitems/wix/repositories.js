@@ -8,18 +8,22 @@ export class CheckListRepository {
 		this.key = `tasks_${days.days}_${days.days_after_move}`;
 	}
 	async approveUser(userForApproval) {
-		return await wixData.save("AccountConfirmation", userForApproval);
+		let result = await this.find({ token: userForApproval.token }, "AccountConfirmation");
+		if(result.items === 0){
+			return await wixData.save("AccountConfirmation", userForApproval);
+		}
 	}
 	async getUserForApproval(token) {
 		return await this.find({ token: token }, "AccountConfirmation");
 	}
 	async setMoveDate(emailAndDate) {
-		let [email, moveDate] = emailAndDate;
+		let email = emailAndDate.email;
+		let moveDate = emailAndDate.moveDate;
 		try {
-			let checkLists = this.find({ email: email }, "UserTasks");
+			let checkLists = await this.find({ email: email }, "UserTasks");
 			if (checkLists.items.length > 0) {
-				checkLists.forEach(item => item.moveDate = moveDate);
-				return await wixData.bulkUpdate("UserTasks", checkLists);
+				checkLists.items.forEach(item => item.moveDate = moveDate);
+				return await wixData.bulkUpdate("UserTasks", checkLists.items);
 			}
 		} catch (e) {
 			console.log(`an err was issued ${e.message} ${e.stack}`);
@@ -123,6 +127,17 @@ export class CheckListRepository {
 		let result = await this.find(this.days, "MovementTasks");
 		return result;
 
+	}
+	async getMoveDate( email ) {
+		try {
+			let result =  await this.find({"email": email}, "UserTasks");
+			if(result.items){
+				return await result.items[0].moveDate;
+			}
+
+		} catch (e) {
+			console.log(`an err was issued ${e.message} ${e.stack}`);
+		}
 	}
 }
 
