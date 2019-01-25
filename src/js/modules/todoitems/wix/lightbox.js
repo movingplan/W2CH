@@ -6,23 +6,32 @@ import wixLocation from 'wix-location';
 import wixData from 'wix-data'
 import { MainService } from 'public/todoitems/services/main.service.js'
 
-$w.onReady(function () {
-	//TODO: write your page related code here...
+let handler;
 
-});
-export async function button1_click(event) {
+function onMessageHandler(days, component, interval) {
+
+	return function (event) {
+		handler = new MessageHandler(event, days, component, interval);
+	}
+}
+let interval;
+let days;
+$w.onReady(() => {
 	try {
-
-		let user = await wixUsers.promptLogin({ "mode": "signup", "lang": "de" });
-		console.log(`after promt`, user, wixWindow.lightbox.getContext());
-		let days = { days: 90, days_after_move: 0 };
-		let ms = new MainService(days);
-		await ms.registerForApprovalAndTransfer();
-		await wixUsers.emailUser('Verify', user.id, { variables: { "approvalToken": user.id } });
-		await wixLocation.to("/verification");
-
+		let component = $w("#html1");
+		days = wixWindow.lightbox.getContext(); // {days, days_after_move}
+		interval = setInterval(() => component.postMessage({ ready: "Y", days }, "*"), 2000);
+		component.onMessage(onMessageHandler(days, component, interval));
 	} catch (err) {
-		console.log(`${err.message} ${err.stack}`)
+		console.log(`Error ${JSON.stringify(err)}`);
 	}
 
+});
+
+export async function button11_click(event) {
+	if (wixUsers.currentUser.loggedIn === false) {
+		clearInterval(interval);
+		await wixWindow.lightbox.close();
+		await wixWindow.openLightbox("Speichern Checkliste", days);
+	}
 }

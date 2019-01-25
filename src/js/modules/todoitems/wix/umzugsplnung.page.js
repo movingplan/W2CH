@@ -58,17 +58,18 @@ let refreshPage2 = async ($item, itemData, index) => {
 };
 
 const openLightBox = async (before, after, target) => {
-	let interval = setInterval(() => { 
-		$w("#repeater1").forEachItem(refreshPage);
-		$w("#repeater2").forEachItem(refreshPage2);
-	 }, 1000);
+	// let interval = setInterval(() => { 
+	// 	$w("#repeater1").forEachItem(refreshPage);
+	// 	$w("#repeater2").forEachItem(refreshPage2);
+	//  }, 1000);
 	await wixWindow.openLightbox("Checklist_3Month", await getDays(before, after));
-	clearInterval(interval);
-	$w("#repeater1").forEachItem(refreshPage);
+	//clearInterval(interval);
+	$w("#repeater1").forEachItem(await refreshPage);
+	$w("#repeater1").forEachItem(await refreshPage2);
 };
 
 $w.onReady( function () {
-	 let md = async () =>(await  MainService.getMoveDate());
+	 let md = async () =>await  MainService.getMoveDate();
 
 	$w('#datePicker1').value = md();
 	//console.log(result);

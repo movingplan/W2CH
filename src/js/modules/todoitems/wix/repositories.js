@@ -51,6 +51,7 @@ export class CheckListRepository {
 				todo.items[0].tasks = toSave.tasks;
 				return await wixData.update("UserTasks", todo.items[0]);
 			}
+			
 			return await wixData.save("UserTasks", toSave);
 		} catch (e) {
 			console.log(`an err was issued ${e.message} ${e.stack}`);
@@ -63,8 +64,8 @@ export class CheckListRepository {
 				throw new Error("there is nothing to save");
 			}
 
-			let userTasksExist = await this.find({ email }, "UserTasks");
-			console.log(`in transfer ${userTasksExist.items} length ${userTasksExist.items.length}`);
+			let userTasksExist = await this.find({ "email": email }, "UserTasks");
+			console.log(`in transfer ${JSON.stringify(userTasks)} length ${userTasks.length}`);
 
 			if (userTasksExist.items.length === 0) {
 				console.log(`before save ${JSON.stringify(userTasks), userTasksExist}`);
@@ -131,8 +132,16 @@ export class CheckListRepository {
 	async getMoveDate( email ) {
 		try {
 			let result =  await this.find({"email": email}, "UserTasks");
-			if(result.items){
-				return await result.items[0].moveDate;
+			
+			if(result.items.length >=1){
+				 let res = result.items.filter(item=>{
+				 if(item.moveDate) {
+					 return item.moveDate
+				 }
+				 });
+				 if(res.length >=1){
+					 return res[0];
+				 }
 			}
 
 		} catch (e) {
