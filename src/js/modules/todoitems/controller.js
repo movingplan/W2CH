@@ -1,5 +1,7 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
+import * as data from "../../json/data";
+
 "use strict"
 
 /*
@@ -47,6 +49,8 @@ export default class extends app.Controller {
                 }
             }
         });
+
+        this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
     }
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
@@ -87,22 +91,24 @@ export default class extends app.Controller {
         return { li, input };
     }
 
-    removeToDoItem(e) {
-        let dataset = this.view.removeItem(e);
-        let tasks = this.model.get('tasks');
-        this.model.set({
-            'tasks': tasks.map(function (value, index, arr) {
-                if (value._id === dataset.id) {
-                    value.state = dataset.state;
-                }
-                return value;
-            })
-        });
+    removeToDoItem(event) {
+        this.view.confirm("Please confirm", "Are you sure you want to delete item?", (dataset) => {
 
-        this.sendMessageToWix({
-            tasks: this.model.get('tasks'),
-            POST: "POST"
-        });
+            let tasks = this.model.get('tasks');
+            this.model.set({
+                'tasks': tasks.map(function (value, index, arr) {
+                    if (value._id === dataset.id) {
+                        value.state = dataset.state;
+                    }
+                    return value;
+                })
+            });
+
+            this.sendMessageToWix({
+                tasks: this.model.get('tasks'),
+                POST: "POST"
+            });
+        }, () => { }, event);
     }
 
     addToDoItem(e) {
@@ -147,7 +153,7 @@ export default class extends app.Controller {
     fromReadyOrSave(event) {
         return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
-   
+
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {

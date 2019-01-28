@@ -71,7 +71,7 @@ const openLightBox = async (before, after, target) => {
 $w.onReady( function () {
 	 let md = async () =>await  MainService.getMoveDate();
 
-	$w('#datePicker1').value = md();
+	md().then(result=>$w('#datePicker1').value);
 	//console.log(result);
 
 	$w('#button2').onClick((e) => {
@@ -116,7 +116,6 @@ $w.onReady( function () {
 
 
 export async function datePicker1_change(event) {
-	
 	let result = await MainService.setMoveDate($w('#datePicker1').value);
 	console.log(result);
 }
