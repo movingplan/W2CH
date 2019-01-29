@@ -69,7 +69,10 @@ $w.onReady(function () {
 	$w('#columnStrip1').hide();
 	let md = async () => await MainService.getMoveDate();
 
-	md().then(result => { $w('#datePicker1').value = result; });
+	md().then(result => {
+		console.log(result);
+		 $w('#datePicker1').value = result.moveDate; 
+		 });
 	//console.log(result);
 
 	$w('#button2').onClick((e) => {
