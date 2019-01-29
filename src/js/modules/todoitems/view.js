@@ -43,11 +43,21 @@ export default class extends app.View {
             this.list.appendChild(li);
         }
     }
+    info (title, message) {
 
+        this.modal.find('#todoModalCenterTitle').html(title);
+        this.modal.find('#message').html(message);
+        this.modal.find('#modal-footer').hide();
+        setTimeout(() => {
+            this.modal.modal("hide");
+        }, 3000);
+        this.modal.modal('show');
+}
     confirm(title, message, yescallBack, nocallBack, source) {
 
         this.modal.find('#todoModalCenterTitle').html(title);
         this.modal.find('#message').html(message);
+        this.modal.find('#modal-footer').show();
         this.modal.on('click', '#confirm', (e) => {
             this.modal.modal("hide");
             this.modal.on("hidden.bs.modal", yescallBack(this.removeItem(source)));

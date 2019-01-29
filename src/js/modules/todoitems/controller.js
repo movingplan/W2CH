@@ -1,6 +1,6 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-// import * as data from "../../json/data";
+import * as data from "../../json/data";
 
 "use strict"
 
@@ -50,7 +50,7 @@ export default class extends app.Controller {
             }
         });
 
-        // this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
+        this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
     }
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
@@ -92,7 +92,7 @@ export default class extends app.Controller {
     }
 
     removeToDoItem(event) {
-        this.view.confirm("", "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (dataset) => {
+        this.view.confirm("Please confirm", "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (dataset) => {
 
             let tasks = this.model.get('tasks');
             this.model.set({
@@ -154,9 +154,17 @@ export default class extends app.Controller {
         return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
     }
 
+    fromSaveAll(data){ //data is event.data
+       let {saveAll} = data;
+       return saveAll;
+    }
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
+            if(this.fromSaveAll(event.data)){
+                this.view.confirm(``,`Ihre Daten wurden erfolgreich gespeichert.`);
+                return;
+            }
             this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             if (this.fromReadyOrSave(event)) {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
