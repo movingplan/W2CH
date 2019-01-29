@@ -1,6 +1,6 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-import * as data from "../../json/data";
+// import * as data from "../../json/data";
 
 "use strict"
 
@@ -50,7 +50,7 @@ export default class extends app.Controller {
             }
         });
 
-        this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
+        // this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
     }
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;

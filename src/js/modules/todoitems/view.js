@@ -43,6 +43,7 @@ export default class extends app.View {
             this.list.appendChild(li);
         }
     }
+    
     info (title, message) {
 
         this.modal.find('#todoModalCenterTitle').html(title);

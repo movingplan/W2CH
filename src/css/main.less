@@ -210,20 +210,24 @@ input {
     transform: rotate(45deg);
 }
 
-    button.close{
-        position: relative;
-    }
+button.close {
+    position: relative;
+}
+
+#confirm {
+    background-color: #6c0;
+}
 
 .page-loader {
-  margin:0;
-  position: absolute;
-  width:100%;
-   display: -webkit-box;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     align-items: center;
     justify-content: center;
-    height:  ~"calc(100% - 20px)";
+    height: ~"calc(100% - 20px)";
     svg {
         width: 150px;
         height: 150px;
@@ -237,22 +241,22 @@ input {
             animation-timing-function: ease-in-out;
             transform-origin: center center;
             &:nth-child(1) {
-                stroke: #5F6D9C ;
+                stroke: #5F6D9C;
                 stroke-dasharray: 50;
                 animation-delay: -0.2s;
             }
             &:nth-child(2) {
-                stroke: #6196D0  ;
+                stroke: #6196D0;
                 stroke-dasharray: 100;
                 animation-delay: -0.4s;
             }
             &:nth-child(3) {
-                stroke: #C81414 ;
+                stroke: #C81414;
                 stroke-dasharray: 180;
                 animation-delay: -0.6s;
             }
             &:nth-child(4) {
-                stroke: #66CC00  ;
+                stroke: #66CC00;
                 stroke-dasharray: 350;
                 stroke-dashoffset: -100;
                 animation-delay: -0.8s;
