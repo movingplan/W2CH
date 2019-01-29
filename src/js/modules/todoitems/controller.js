@@ -92,7 +92,7 @@ export default class extends app.Controller {
     }
 
     removeToDoItem(event) {
-        this.view.confirm("Please confirm", "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (dataset) => {
+        this.view.confirm(``, "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (dataset) => {
 
             let tasks = this.model.get('tasks');
             this.model.set({

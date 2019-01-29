@@ -33,5 +33,8 @@ export async function button11_click(event) {
 		clearInterval(interval);
 		await wixWindow.lightbox.close();
 		await wixWindow.openLightbox("Speichern Checkliste", days);
+	}else{
+		let component = $w("#html1");
+		component.postMessage({ saveAll: "Y" }, "*")
 	}
 }

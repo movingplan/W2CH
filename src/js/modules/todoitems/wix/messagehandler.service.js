@@ -15,10 +15,10 @@ export class MessageHandlerService {
 
 	async init() {
 		try {
-			let tasks = this.event.data.tasks;
 			console.log(console.log('WIX_ENV: data received from APP_ENV', this.event.data));
-
-			if (this.event.data.hasOwnProperty("POST")) {
+			let {POST, GET, tasks} = this.event.data;
+			if (POST)) {
+				
 				if (!tasks) {
 					throw new Error(`Tasks were not sent to wix : received data: ${this.event.data}`);
 				}
@@ -26,14 +26,14 @@ export class MessageHandlerService {
 				let entity = {
 					tasks: tasks
 				};
-				let localData = await this.mainService.save( entity );
-				return await this.component.postMessage({ "saved": "true", "tasks": localData.tasks, "days": this.days }, '*');
+				let {tasks} = await this.mainService.save( entity );
+				return await this.component.postMessage({ "saved": "true", "tasks": tasks, "days": this.days }, '*');
 			}
 
-			if (this.event.data.hasOwnProperty("GET")) {
-				let result = await this.mainService.get();
+			if (GET) {
+				let {items} = await this.mainService.get();
 				
-				return await this.component.postMessage({ "tasks": result.items, "days": this.days }, "*");
+				return await this.component.postMessage({ "tasks": items, "days": this.days }, "*");
 			}
 
 		} catch (err) {
