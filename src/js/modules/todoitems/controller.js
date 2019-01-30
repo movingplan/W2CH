@@ -1,6 +1,6 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-//import * as data from "../../json/data";
+import * as data from "../../json/data";
 
 "use strict"
 
@@ -50,7 +50,7 @@ export default class extends app.Controller {
             }
         });
 
-        //this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
+        this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} });
     }
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
@@ -158,9 +158,17 @@ export default class extends app.Controller {
        let {saveAll} = data;
        return saveAll;
     }
+    fromSyncCalendar(data){ //data is event.data
+        let {syncCalendar} = data;
+        return syncCalendar;
+     }
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
+            if(this.fromSyncCalendar(event.data)){
+                this.view.info(``, `Wir arbeiten daran, Ihnen dieses Feature zur Verfügung zu stellen`);
+                return;
+            }
             if(this.fromSaveAll(event.data)){
                 this.view.info(``,`Ihre Daten wurden erfolgreich gespeichert.`);
                 return;
