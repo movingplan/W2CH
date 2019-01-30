@@ -221,7 +221,7 @@ button.close {
 
 #confirm {
     background-color: #6c0;
-    border: 1px solid  #6c0;
+    border: 1px solid #6c0;
 }
 
 .page-loader {
@@ -275,6 +275,31 @@ button.close {
         }
     }
 }
+
 #todo {
-    padding-bottom:10px;
+    padding-bottom: 10px;
+}
+
+#loader {
+    display: table-cell;
+    vertical-align: middle;
+    i {
+        display: none;
+        font-weight: 900;
+    }
+    margin-right:5px;
+}
+
+#asset {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.loader-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
 }

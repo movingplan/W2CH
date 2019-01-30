@@ -27,8 +27,8 @@ let config = {
   Top level tasks
 */
 gulp.task('default', ['dev', 'watch']);
-gulp.task('dev', ['init.dev', 'html',  'js', 'css', 'test']);
-gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'test']);
+gulp.task('dev', ['init.dev', 'html',  'js', 'css', 'assets', 'test']);
+gulp.task('prod', ['init.prod', 'html',  'js', 'css', 'assets', 'test']);
 gulp.task('clean', clean);
 
 
@@ -94,6 +94,19 @@ gulp.task('css', ['prebuild'], function() {
     return src;
 });
 
+gulp.task('assets', ['prebuild'], function() {
+    var src = gulp.src([
+            './src/assets/*.*'
+        ])
+        .pipe(plumber({
+            errorHandler: errorHandler
+        }))        
+      
+        src.pipe(gulp.dest('./dist/assets/'));
+
+    return src;
+});
+
 gulp.task('test', ['prebuild'], function() {
     return transpile('./src/test/**/*.js')
         .pipe(gulp.dest('./dist/test/'));
@@ -101,7 +114,7 @@ gulp.task('test', ['prebuild'], function() {
 
 gulp.task('watch', function() {
     gulp.watch('./src/*.html', ['html']);
- 
+    gulp.watch('./src/assets/*.*', ['assets']);
     gulp.watch([
             './src/js/main.js',
             './src/js/modules/**/*.js',
