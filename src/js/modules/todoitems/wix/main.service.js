@@ -39,6 +39,7 @@ export class MainService {
 		}
 
 	}
+	
 	async get() {
 		try {
 			let user, email;

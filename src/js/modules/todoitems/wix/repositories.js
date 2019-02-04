@@ -205,7 +205,8 @@ export class CheckListRepositoryLocal {
 
 	}
 	async get() {
-		let localdata = local.getItem(this.DATA_KEY);
+		try {
+			let localdata = local.getItem(this.DATA_KEY);
 
 		if (localdata) {
 
@@ -214,7 +215,12 @@ export class CheckListRepositoryLocal {
 		}
 
 		let days = this.days;
-		return await this.find(days, "MovementTasks");
+			return await this.find(days, "MovementTasks");
+
+		} catch (e) {
+			console.log(`local repository - get err ${e.message} ${e.stack}`);
+		}
+	
 
 	}
 
@@ -233,6 +239,7 @@ export class CheckListRepositoryLocal {
 		try {
 			local.removeItem(this.DATA_KEY);
 			local.setItem(this.DATA_KEY, JSON.stringify(entity));
+			console.log(`repository - save OK`);
 			return await JSON.parse(local.getItem(this.DATA_KEY));
 		} catch (err) {
 			console.log(`error save in local ${err}`);

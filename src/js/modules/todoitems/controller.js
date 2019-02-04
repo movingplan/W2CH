@@ -52,7 +52,6 @@ export default class extends app.Controller {
 
         //setTimeout(()=>{this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} }}, );
     }
-
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
         let li;
@@ -69,10 +68,10 @@ export default class extends app.Controller {
         let data = this.getModelState(e);
         this.model.set({ 'tasks': data.tasks });
 
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     POST: "POST"
-        // });
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            POST: "POST"
+        });
 
     }
 
@@ -105,10 +104,10 @@ export default class extends app.Controller {
                 })
             });
 
-            // this.sendMessageToWix({
-            //     tasks: this.model.get('tasks'),
-            //     POST: "POST"
-            // });
+            this.sendMessageToWix({
+                tasks: this.model.get('tasks'),
+                POST: "POST"
+            });
         }, () => { }, event);
     }
 
@@ -132,10 +131,10 @@ export default class extends app.Controller {
 
         this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     POST: "POST"
-        // });
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            POST: "POST"
+        });
 
     }
 
@@ -173,8 +172,8 @@ export default class extends app.Controller {
             if(this.fromSaveAll(event.data)){
                 this.view.info(``,`Ihre Daten wurden erfolgreich gespeichert.`);
                 this.sendMessageToWix({
-                   tasks: this.model.get('tasks'),
-                   POST: "POST"
+                    tasks: this.model.get('tasks'),
+                    POST: "POST"
                 });
                 return;
             }

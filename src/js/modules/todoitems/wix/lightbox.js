@@ -32,7 +32,7 @@ export async function image4_click(event) {
 	if (wixUsers.currentUser.loggedIn === false) {
 		clearInterval(interval);
 		await wixWindow.lightbox.close();
-		await wixWindow.openLightbox("Registration", { mode: 'save' });
+		await wixWindow.openLightbox("Registration", {mode:'save'});
 	} else {
 		let component = $w("#html1");
 		component.postMessage({ saveAll: "Y" }, "*")
@@ -42,19 +42,19 @@ export async function image2_click(event) {
 	if (wixUsers.currentUser.loggedIn === false) {
 		clearInterval(interval);
 		await wixWindow.lightbox.close();
-		await wixWindow.openLightbox("Registration", { mode: 'calendar' });
+		await wixWindow.openLightbox("Registration", {mode:'calendar'});
 	} else {
-		let component = $w("#html1");
-		component.postMessage({ syncCalendar: "Y" }, "*")
-	}
+	let component = $w("#html1");
+	component.postMessage({ syncCalendar: "Y" }, "*")
+}
 }
 export async function image3_click(event) {
 	if (wixUsers.currentUser.loggedIn === false) {
 		clearInterval(interval);
 		await wixWindow.lightbox.close();
-		await wixWindow.openLightbox("Registration", { mode: 'pdf' });
+		await wixWindow.openLightbox("Registration", {mode: 'pdf'});
 	} else {
-		let component = $w("#html1");
-		component.postMessage({ pdfExport: "Y" }, "*")
-	}
+	let component = $w("#html1");
+	component.postMessage({ pdfExport: "Y" }, "*")
+}
 }
