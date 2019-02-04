@@ -176,6 +176,7 @@ export default class extends app.Controller {
                    tasks: this.model.get('tasks'),
                    POST: "POST"
                 });
+                return;
             }
             this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
             if (this.fromReadyOrSave(event)) {
