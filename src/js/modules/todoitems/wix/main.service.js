@@ -39,7 +39,7 @@ export class MainService {
 		}
 
 	}
-	
+
 	async get() {
 		try {
 			let user, email;
@@ -56,6 +56,8 @@ export class MainService {
 
 	}
 	async save(toSave) {
+		let loggedin = wixUsers.currentUser.loggedIn;
+		if(loggedin) {
 		try {
 			let user = wixUsers.currentUser;
 			let email = await user.getEmail();
@@ -65,6 +67,7 @@ export class MainService {
 				return await this.repository.save(toInsert);
 			}
 		} catch (err) {}
+	}
 		return await this.repository.save(toSave.tasks);
 	}
 

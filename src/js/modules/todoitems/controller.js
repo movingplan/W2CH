@@ -68,10 +68,10 @@ export default class extends app.Controller {
         let data = this.getModelState(e);
         this.model.set({ 'tasks': data.tasks });
 
-        this.sendMessageToWix({
-            tasks: this.model.get('tasks'),
-            POST: "POST"
-        });
+        // this.sendMessageToWix({
+        //     tasks: this.model.get('tasks'),
+        //     POST: "POST"
+        // });
 
     }
 
@@ -104,10 +104,10 @@ export default class extends app.Controller {
                 })
             });
 
-            this.sendMessageToWix({
-                tasks: this.model.get('tasks'),
-                POST: "POST"
-            });
+            // this.sendMessageToWix({
+            //     tasks: this.model.get('tasks'),
+            //     POST: "POST"
+            // });
         }, () => { }, event);
     }
 
@@ -131,10 +131,10 @@ export default class extends app.Controller {
 
         this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
-        this.sendMessageToWix({
-            tasks: this.model.get('tasks'),
-            POST: "POST"
-        });
+        // this.sendMessageToWix({
+        //     tasks: this.model.get('tasks'),
+        //     POST: "POST"
+        // });
 
     }
 
@@ -151,7 +151,7 @@ export default class extends app.Controller {
     }
 
     fromReadyOrSave(event) {
-        return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("save");
+        return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("saved");
     }
 
     fromSaveAll(data){ //data is event.data
@@ -165,6 +165,8 @@ export default class extends app.Controller {
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
         if (event.data) {
+            let {tasks,days} = event.data;
+            this.model.set({ 'tasks': tasks, 'days': days });
             if(this.fromSyncCalendar(event.data)){
                 this.view.info(``, `Wir arbeiten daran, Ihnen dieses Feature zur Verfügung zu stellen`);
                 return;
@@ -175,9 +177,9 @@ export default class extends app.Controller {
                     tasks: this.model.get('tasks'),
                     POST: "POST"
                 });
-                return;
+               
             }
-            this.model.set({ 'tasks': event.data.tasks, 'days': event.data.days });
+          
             if (this.fromReadyOrSave(event)) {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
