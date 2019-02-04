@@ -8,13 +8,29 @@ export class CheckListRepository {
 		this.key = `tasks_${days.days}_${days.days_after_move}`;
 	}
 	async approveUser(userForApproval) {
-		let result = await this.find({ token: userForApproval.token }, "AccountConfirmation");
-		if(result.items === 0){
-			return await wixData.save("AccountConfirmation", userForApproval);
+		try {
+			let result = await this.find({ token: userForApproval.token }, "AccountConfirmation");
+			if (result.items === 0) {
+				return await wixData.save("AccountConfirmation", userForApproval);
+			}
+			return await wixData.update("AccountConfirmation", userForApproval);
+
+		} catch (err) {
+			console.log(`an err was issued ${err.message} ${err.stack}`);
 		}
+
 	}
-	async getUserForApproval(token) {
-		return await this.find({ token: token }, "AccountConfirmation");
+
+	async accountConfirmationExists(userForApproval) {
+		let result = await this.find({ token: userForApproval.token }, "AccountConfirmation");
+		if (result.items.length === 1) {
+			return true;
+		}
+		return false;
+	}
+
+	async getUserForApproval(filter) {
+		return await this.find({ 'token': filter.token }, "AccountConfirmation");
 	}
 	async setMoveDate(emailAndDate) {
 		let email = emailAndDate.email;
@@ -45,16 +61,28 @@ export class CheckListRepository {
 
 	async save(toSave) {
 		try {
-			
-			let todo = await this.find({ email: toSave.email, key: toSave.key }, "UserTasks");
-			if (todo.items.length === 1) {
-				todo.items[0].tasks = toSave.tasks;
-				return await wixData.update("UserTasks", todo.items[0]);
+		
+			if (!toSave.key) {
+				throw new Error(`no key was sent to save method in repository!`)
 			}
+			let { items } = await this.find({ 'email': toSave.email, 'key': toSave.key }, "UserTasks");
 			
-			return await wixData.save("UserTasks", toSave);
+			
+			if (items.length === 0) {
+					console.log(`save in repository - OK`);
+				return await wixData.save("UserTasks", toSave);
+			}
+
+			if(items.length === 1) {
+				items[0].key = toSave.key;
+				items[0].tasks = toSave.tasks;
+				items[0].email = toSave.email;
+				console.log(`update in repository - OK`);
+				return await wixData.update("UserTasks", items[0]);
+			}
+
 		} catch (e) {
-			console.log(`an err was issued ${e.message} ${e.stack}`);
+			console.log(`an err was issued in repository save when user is logged in ${e.message} ${e.stack}`);
 		}
 	}
 
@@ -119,29 +147,29 @@ export class CheckListRepository {
 	}
 	async get(email) {
 		let key = this.key;
-		let wixcol = await this.find({"email": email, "key":key}, "UserTasks");
+		let wixcol = await this.find({ "email": email, "key": key }, "UserTasks");
 		console.log(wixcol);
 		if (wixcol.items.length === 1) {
 			let res = wixcol.items[0].tasks;
-			return await {items:(res)};
+			return await { items: (res) };
 		}
 		let result = await this.find(this.days, "MovementTasks");
 		return result;
 
 	}
-	async getMoveDate( email ) {
+	async getMoveDate(email) {
 		try {
-			let result =  await this.find({"email": email}, "UserTasks");
-			
-			if(result.items.length >=1){
-				 let res = result.items.filter(item=>{
-				 if(item.moveDate) {
-					 return item.moveDate
-				 }
-				 });
-				 if(res.length >=1){
-					 return res[0];
-				 }
+			let result = await this.find({ "email": email }, "UserTasks");
+
+			if (result.items.length >= 1) {
+				let res = result.items.filter(item => {
+					if (item.moveDate) {
+						return item.moveDate
+					}
+				});
+				if (res.length >= 1) {
+					return res[0].moveDate;
+				}
 			}
 
 		} catch (e) {
@@ -178,13 +206,13 @@ export class CheckListRepositoryLocal {
 	}
 	async get() {
 		let localdata = local.getItem(this.DATA_KEY);
-	
+
 		if (localdata) {
-			
+
 			let todos = JSON.parse(localdata);
 			return await { items: todos };
 		}
-		
+
 		let days = this.days;
 		return await this.find(days, "MovementTasks");
 

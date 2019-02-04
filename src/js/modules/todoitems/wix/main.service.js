@@ -1,8 +1,8 @@
-import wixUsers from 'wix-users';
+
 import { RepositoryFactory } from 'public/todoitems/repository/repositoryfactory.js'
 import { local } from 'wix-storage';
 import wixLocation from 'wix-location';
-
+import wixUsers from 'wix-users';
 export class MainService {
 	constructor(days) {
 		if (!days) {
@@ -13,22 +13,22 @@ export class MainService {
 		this.key = `tasks_${days.days}_${days.days_after_move}`;
 		return this;
 	}
-	static async getMoveDate(){
-        try {
-			let ms = new MainService({days:90, days_after_move:0});
+	static async getMoveDate() {
+		try {
+			let ms = new MainService({ days: 90, days_after_move: 0 });
 			let user = wixUsers.currentUser;
 			let email = await user.getEmail();
 			if (email) {
-				return await ms.repository.getMoveDate( email);
+				return await ms.repository.getMoveDate(email);
 			}
 		} catch (e) {
 			console.log(`an err was issued ${e.message} ${e.stack}`);
 		}
-    }
+	}
 
 	static async setMoveDate(moveDate) {
 		try {
-			let ms = new MainService({days:90, days_after_move:0});
+			let ms = new MainService({ days: 90, days_after_move: 0 });
 			let user = wixUsers.currentUser;
 			let email = await user.getEmail();
 			if (email) {
@@ -42,12 +42,12 @@ export class MainService {
 	async get() {
 		try {
 			let user, email;
-		try {
-			user = wixUsers.currentUser;
-			email = await user.getEmail();
-		} catch (err) {
-			console.log(`user err ${{email}} ${err.stack}`);
-		}
+			try {
+				user = wixUsers.currentUser;
+				email = await user.getEmail();
+			} catch (err) {
+				console.log(`user err ${{email}} ${err.stack}`);
+			}
 			return await this.repository.get(email);
 		} catch (e) {
 			console.log(`an err was issued ${e.message} ${e.stack}`);
@@ -60,24 +60,25 @@ export class MainService {
 			let email = await user.getEmail();
 			if (email) {
 				let key = this.key;
-				let toInsert = { tasks: toSave.tasks, email, key };
+				let toInsert = { 'tasks': toSave.tasks, 'email': email, 'key': key };
 				return await this.repository.save(toInsert);
 			}
 		} catch (err) {}
 		return await this.repository.save(toSave.tasks);
 	}
-	async approveUser(query) {
-		let userNotApproved = async (userForApproval, token) => {
-			return userForApproval.length === 1 && userForApproval.token === token && userForApproval.reqistrationConfirmation === false;
-		}
+
+	static async approveUser(query) {
+		let ms = new MainService({ days: 90, days_after_move: 0 });
+		let userForApproval;
 		if (query.token) {
-			let userForApproval = await this.repository.getUserForApproval({ token: query.token });
-			if (await userNotApproved(userForApproval, query.token)) {
+			userForApproval = await ms.repository.getUserForApproval({ token: query.token, registrationConfirmation: false });
+			let { items } = userForApproval;
+			if (items.length === 1) {
+				userForApproval = items[0];
 				userForApproval.registrationConfirmation = true;
-				return await this.repository.approveUser(userForApproval);
+				return await ms.repository.approveUser(userForApproval);
 			}
 		}
-
 	}
 
 	async getLocalTasks(email) {
@@ -108,25 +109,27 @@ export class MainService {
 	}
 
 	async registerForApprovalAndTransfer() {
+		let registered = false;
+		let exists = false;
+		let loggedIn;
 		try {
-			let user;
-			let email;
-			let toSave
-			try {
-				user = await wixUsers.currentUser;
-				email = await user.getEmail();
-			} catch (err) {
-				console.log(`an err in user block! in register for approval ${err.message} ${err.stack} ${err}`);
+			let user = wixUsers.currentUser;
+			let email = await user.getEmail();
+
+			//1. whether it exists already in AccountConfirmation
+			exists = await this.repository.accountConfirmationExists({ 'token': user.id, 'email': email });
+			if ( exists === false ) {
+				let toSave = await this.getLocalTasks(email);
+				let approve = await this.repository.registerForApproval({ 'token': user.id, 'email': email });
+				let res = await this.repository.transfer(toSave, email);
+				registered = true;
 			}
-			toSave = await this.getLocalTasks(email);
-			let approve = await this.repository.registerForApproval({ 'token': user.id, 'email': email });
-			let res = await this.repository.transfer(toSave, email);
 
 			//return await this.repositoryLocal.clearAll();
 		} catch (e) {
-			console.log(`an err was issued ${e.message} ${e.stack}`);
+			console.log(`error in register approval and transfer = > an err was issued ${e.message} ${e.stack}`);
 		}
-
+		return registered;
 	}
 
 }
