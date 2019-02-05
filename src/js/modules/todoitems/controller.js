@@ -55,14 +55,22 @@ export default class extends app.Controller {
 
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
-        let li;
-        let input;
-        ({ li, input } = this.getClicked(e, li, input));
+        let li, input, label;
+       
+        ({ li, input, label } = this.getClicked(e, li, input, label));
 
         if (input.checked) {
             li.classList.add('checked');
+            if(label){
+                label.classList.add(`checkbox-container`);
+                label.classList.add('checked');
+            }
             li.dataset.state = "completed";
         } else {
+            if(label){
+                label.classList.remove('checked');
+                label.classList.add(`checkbox-container`);
+            }
             li.classList.remove('checked');
             li.dataset.state = "default";
         }
@@ -76,20 +84,23 @@ export default class extends app.Controller {
 
     }
 
-    getClicked(e, li, input) {
+    getClicked(e, li, input,label) {
         if (e.target.tagName === 'LABEL') {
             li = e.srcElement.parentElement;
             input = e.srcElement.children[0];
+            label = e.target;
         }
         if (e.target.tagName === 'SPAN' || e.target.tagName === 'INPUT') {
             li = e.srcElement.parentElement.parentElement;
             input = e.srcElement;
+            label = e.srcElement.parentElement;
         }
         if (e.target.tagName === 'LI') {
             li = e.srcElement;
             input = li.children[0].children[0];
+            label = li.children[0];
         }
-        return { li, input };
+        return { li, input, label };
     }
 
     removeToDoItem(event) {
