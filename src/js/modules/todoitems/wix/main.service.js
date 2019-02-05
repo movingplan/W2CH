@@ -13,6 +13,19 @@ export class MainService {
 		this.key = `tasks_${days.days}_${days.days_after_move}`;
 		return this;
 	}
+	static async clearLocalStorage(){
+		let ms = new MainService({ days: 90, days_after_move: 0 });
+		let {items} = await ms.repository.getAllPredefinedTasks();
+		if (items.length > 0) {
+				let keys = new Set(res.items.map(item => `tasks_${item.days}_${item.days_after_move}`));
+				let keyArr = [...keys];
+				keyArr.forEach(element => {
+					local.removeItem(element);
+				});
+				
+			}
+		}
+	}
 	static async getMoveDate() {
 		try {
 			let ms = new MainService({ days: 90, days_after_move: 0 });

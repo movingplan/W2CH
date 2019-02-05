@@ -162,10 +162,7 @@ export default class extends app.Controller {
         return data;
     }
 
-    fromSaveAll(data) { //data is event.data
-        let { saveAll } = data;
-        return saveAll;
-    }
+   
     fromSyncCalendar(data) { //data is event.data
         let { syncCalendar } = data;
         return syncCalendar;
@@ -191,14 +188,14 @@ export default class extends app.Controller {
                 return;
             }
             if (saveAll) {
-                let { beforeRegister } = event.data;
+               
                 if (!beforeRegister) {
                     this.view.info(``, `Ihre Daten wurden erfolgreich gespeichert.`);
                 }
-                this.sendMessageToWix({
-                    tasks: this.model.get('tasks'),
-                    POST: "POST"
-                });
+                // this.sendMessageToWix({
+                //     tasks: this.model.get('tasks'),
+                //     POST: "POST"
+                // });
             }
 
             if (ready) {
