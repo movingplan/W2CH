@@ -180,7 +180,7 @@ export default class extends app.Controller {
                     tasks: this.model.get('tasks'),
                     POST: "POST"
                 });
-               
+               return;
             }
           
             if (this.fromReadyOrSave(event)) {
