@@ -50,8 +50,9 @@ export default class extends app.Controller {
             }
         });
 
-        //setTimeout(()=>{this.model.set({ 'tasks': data.tasks, 'days':{days:90, days_after_move:0} }}, );
+        //setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
     }
+
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
         let li;
@@ -68,10 +69,10 @@ export default class extends app.Controller {
         let data = this.getModelState(e);
         this.model.set({ 'tasks': data.tasks });
 
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     POST: "POST"
-        // });
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            POST: "POST"
+        });
 
     }
 
@@ -104,10 +105,10 @@ export default class extends app.Controller {
                 })
             });
 
-            // this.sendMessageToWix({
-            //     tasks: this.model.get('tasks'),
-            //     POST: "POST"
-            // });
+            this.sendMessageToWix({
+                tasks: this.model.get('tasks'),
+                POST: "POST"
+            });
         }, () => { }, event);
     }
 
@@ -131,10 +132,10 @@ export default class extends app.Controller {
 
         this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     POST: "POST"
-        // });
+        this.sendMessageToWix({
+            tasks: this.model.get('tasks'),
+            POST: "POST"
+        });
 
     }
 
@@ -150,40 +151,46 @@ export default class extends app.Controller {
         return data;
     }
 
-    fromReadyOrSave(event) {
-        return event.data.hasOwnProperty("ready") || event.data.hasOwnProperty("saved");
+    fromSaveAll(data) { //data is event.data
+        let { saveAll } = data;
+        return saveAll;
+    }
+    fromSyncCalendar(data) { //data is event.data
+        let { syncCalendar } = data;
+        return syncCalendar;
     }
 
-    fromSaveAll(data){ //data is event.data
-       let {saveAll} = data;
-       return saveAll;
-    }
-    fromSyncCalendar(data){ //data is event.data
-        let {syncCalendar} = data;
-        return syncCalendar;
-     }
     registerOnMessageReceivedHandler(event) {
         console.log("APP_ENV: data received from wix in registerOnMessageReceivedHandler: ", event);
+
         if (event.data) {
-            let {tasks,days} = event.data;
-            this.model.set({ 'tasks': tasks, 'days': days });
-            if(this.fromSyncCalendar(event.data)){
+
+            let { tasks, days, ready, saveAll, beforeRegister, syncCalendar, error } = event.data;
+
+            if(error){
+                this.view.info(`Error`, `${JSON.stringify(error)}`);
+                return;
+            }
+
+            if (tasks) {
+                this.model.set({ 'tasks': tasks, 'days': days });
+            }
+            if (syncCalendar) {
                 this.view.info(``, `Wir arbeiten daran, Ihnen dieses Feature zur Verfügung zu stellen`);
                 return;
             }
-            if(this.fromSaveAll(event.data)){
-                let {beforeRegister} = event.data;
-                if(!beforeRegister) {
-                    this.view.info(``,`Ihre Daten wurden erfolgreich gespeichert.`);
+            if (saveAll) {
+                let { beforeRegister } = event.data;
+                if (!beforeRegister) {
+                    this.view.info(``, `Ihre Daten wurden erfolgreich gespeichert.`);
                 }
                 this.sendMessageToWix({
                     tasks: this.model.get('tasks'),
                     POST: "POST"
                 });
-               return;
             }
-          
-            if (this.fromReadyOrSave(event)) {
+
+            if (ready) {
                 this.sendMessageToWix(this.prepareGetDataFromWix());
             }
         }
