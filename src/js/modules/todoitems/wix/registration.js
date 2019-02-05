@@ -11,24 +11,27 @@ Die Online-Checkliste kann nur von registrierten Benutzern abgespeichert werden
 Bitte melden Sie sich mit Ihrem Benutzernamen und Passwort an, oder registrieren Sie sich.`;
 
 let calendarSyncText = `Ups...
-Die Funktion 'Mit Kalender synchronisieren' ist nur für registrierte Benutzer möglich.
+Die Kalender-Synchronisation ist nur für registrierte Benutzer möglich.
 Bitte melden Sie sich mit Ihrem Benutzernamen und Passwort an, oder registrieren Sie sich.`;
 
 let pdfDownloadText = `Ups...
-PDF Download ist nur für registrierte Benutzer möglich.
+Die PDF-Funktion ist nur für registrierte Benutzern verfügbar.
 Bitte melden Sie sich mit Ihrem Benutzernamen und Passwort an, oder registrieren Sie sich.`;
 
 let hasToRegisterToBeAbleToRead = `In order to continue reading article blogs, please register or login...`;
 
-let customActionText = `In order to use Mineumzsug planner you have to register...`;
+let customActionText = `Der persönliche Umzugsplaner steht nur registrierten Benutzern zur Verfügung.
+Bitte melden Sie sich mit Ihrem Benutzernamen und Passwort an, oder registrieren Sie sich.`;
 
 $w.onReady(function () {
+   
     if (wixUsers.currentUser.loggedIn) {
         wixLocation.to("/account/my-acount");
         return;
     }
 
     let receivedData;
+    
     try {
         receivedData = wixWindow.lightbox.getContext();
     } catch (e) {
@@ -56,30 +59,33 @@ $w.onReady(function () {
             }
         }
     }
-    $w('#button1').on("click", async () => {
+    $w('#button1').onClick(async () => {
         try {
             let user = await wixUsers.promptLogin({ "mode": "signup", "lang": "de" });
-            await wixUsers.emailUser('Verify', user.id, { variables: { "approvalToken": user.id } });
             let days = { days: 90, days_after_move: 0 };
             let ms = new MainService(days);
-            await ms.registerForApprovalAndTransfer()
-            await wixWindow.lightbox.close();
-            await wixWindow.openLightbox("Verification")
+            await ms.registerForApprovalAndTransfer(user);
+            await wixUsers.emailUser('Verify', user.id, { variables: { "approvalToken": user.id } });
+            await wixWindow.openLightbox(`Verification`);
+                       
         } catch (err) {
             console.log(`${err.message} ${err.stack}`)
         }
 
     });
 
-    $w('#button2').on("click", async () => {
+    $w('#button2').onClick(async () => {
         try {
             let user = await wixUsers.promptLogin({ "mode": "login", "lang": "de" });
-            await wixWindow.lightbox.close();
-            await wixLocation.to("/account/my-account");
+             await wixWindow.openLightbox(`Verification`);
+             await wixWindow.lightbox.close();
+
         } catch (err) {
             console.log(`${err.message} ${err.stack}`)
         }
-    }
+    });
+
+
 });
 
 

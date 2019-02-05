@@ -39,7 +39,6 @@ export class MainService {
 		}
 
 	}
-
 	async get() {
 		try {
 			let user, email;
@@ -47,7 +46,7 @@ export class MainService {
 				user = wixUsers.currentUser;
 				email = await user.getEmail();
 			} catch (err) {
-				console.log(`user err ${{email}} ${err.stack}`);
+				console.log(`user err ${{ email }} ${err.stack}`);
 			}
 			return await this.repository.get(email);
 		} catch (e) {
@@ -55,21 +54,28 @@ export class MainService {
 		}
 
 	}
+
 	async save(toSave) {
+
 		let loggedin = wixUsers.currentUser.loggedIn;
-		if(loggedin) {
-		try {
-			let user = wixUsers.currentUser;
-			let email = await user.getEmail();
-			if (email) {
-				let key = this.key;
-				let toInsert = { 'tasks': toSave.tasks, 'email': email, 'key': key };
-				return await this.repository.save(toInsert);
-			}
-		} catch (err) {}
+		let { tasks } = toSave;
+		if (loggedin) {
+			try {
+				let user = wixUsers.currentUser;
+				let email = await user.getEmail();
+				if (email) {
+					let key = this.key;
+					let toInsert = { 'tasks': tasks, 'email': email, 'key': key };
+					return await this.repository.save(toInsert);
+				}
+			} catch (err) { }
+
+		} else {
+			console.log(`user not logged in`);
+			return await this.repository.save(tasks);
+		}
 	}
-		return await this.repository.save(toSave.tasks);
-	}
+
 
 	static async approveUser(query) {
 		let ms = new MainService({ days: 90, days_after_move: 0 });
@@ -88,7 +94,6 @@ export class MainService {
 	async getLocalTasks(email) {
 		let getcheckListFromLocal = async () => {
 			let res = await this.repository.getAllPredefinedTasks();
-
 			if (res.items.length > 0) {
 				let keys = new Set(res.items.map(item => `tasks_${item.days}_${item.days_after_move}`));
 				let arr = [...keys];
@@ -122,7 +127,7 @@ export class MainService {
 
 			//1. whether it exists already in AccountConfirmation
 			exists = await this.repository.accountConfirmationExists({ 'token': user.id, 'email': email });
-			if ( exists === false ) {
+			if (exists === false) {
 				let toSave = await this.getLocalTasks(email);
 				let approve = await this.repository.registerForApproval({ 'token': user.id, 'email': email });
 				let res = await this.repository.transfer(toSave, email);

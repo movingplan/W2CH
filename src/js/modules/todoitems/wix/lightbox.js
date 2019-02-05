@@ -22,39 +22,38 @@ $w.onReady(() => {
 		days = wixWindow.lightbox.getContext(); // {days, days_after_move}
 		interval = setInterval(() => component.postMessage({ ready: "Y", days }, "*"), 2000);
 		component.onMessage(onMessageHandler(days, component, interval));
+
+		$w('#image4').onClick(() => { //save
+			component.postMessage({ saveAll: "Y" }, "*");
+			if (wixUsers.currentUser.loggedIn === false) {
+				clearInterval(interval);
+				//wixWindow.lightbox.close();
+				wixWindow.openLightbox("Registration", { mode: 'save' });
+
+			}
+		})
+		$w('#image2').onClick(() => {
+
+			if (wixUsers.currentUser.loggedIn === false) {
+				clearInterval(interval);
+				//await wixWindow.lightbox.close();
+				wixWindow.openLightbox("Registration", { mode: 'calendar' });
+			} else {
+				component.postMessage({ syncCalendar: "Y" }, "*")
+			}
+		});
+		$w('#image3').onClick(() => {
+			if (wixUsers.currentUser.loggedIn === false) {
+				clearInterval(interval);
+				//await wixWindow.lightbox.close();
+				wixWindow.openLightbox("Registration", { mode: 'pdf' });
+			} else {
+				component.postMessage({ pdfExport: "Y" }, "*")
+			}
+		});
+
 	} catch (err) {
 		console.log(`Error ${JSON.stringify(err)}`);
 	}
 
 });
-
-export async function image4_click(event) {
-	if (wixUsers.currentUser.loggedIn === false) {
-		clearInterval(interval);
-		await wixWindow.lightbox.close();
-		await wixWindow.openLightbox("Registration", {mode:'save'});
-	} else {
-		let component = $w("#html1");
-		component.postMessage({ saveAll: "Y" }, "*")
-	}
-}
-export async function image2_click(event) {
-	if (wixUsers.currentUser.loggedIn === false) {
-		clearInterval(interval);
-		await wixWindow.lightbox.close();
-		await wixWindow.openLightbox("Registration", {mode:'calendar'});
-	} else {
-	let component = $w("#html1");
-	component.postMessage({ syncCalendar: "Y" }, "*")
-}
-}
-export async function image3_click(event) {
-	if (wixUsers.currentUser.loggedIn === false) {
-		clearInterval(interval);
-		await wixWindow.lightbox.close();
-		await wixWindow.openLightbox("Registration", {mode: 'pdf'});
-	} else {
-	let component = $w("#html1");
-	component.postMessage({ pdfExport: "Y" }, "*")
-}
-}

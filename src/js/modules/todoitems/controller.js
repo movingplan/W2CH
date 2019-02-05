@@ -172,7 +172,10 @@ export default class extends app.Controller {
                 return;
             }
             if(this.fromSaveAll(event.data)){
-                this.view.info(``,`Ihre Daten wurden erfolgreich gespeichert.`);
+                let {beforeRegister} = event.data;
+                if(!beforeRegister) {
+                    this.view.info(``,`Ihre Daten wurden erfolgreich gespeichert.`);
+                }
                 this.sendMessageToWix({
                     tasks: this.model.get('tasks'),
                     POST: "POST"
