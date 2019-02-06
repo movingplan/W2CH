@@ -1,6 +1,6 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-//import * as data from "../../json/data";
+import * as data from "../../json/data";
 
 "use strict"
 
@@ -22,7 +22,7 @@ export default class extends app.Controller {
             this.view.renderToDoItems(this.model.get('tasks'));
             this.bindEventListeners();
         });
-       // setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
+        setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
     }
 
     bindEventListeners() {
