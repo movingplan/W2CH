@@ -84,6 +84,23 @@ export default class extends app.View {
         this.modal.modal('show');
     }
 
+    setCounter (todos){
+        let count, total;
+        if(!todos) return;
+        try {
+			if (todos) {
+				total = todos.filter(item => item.state !== 'deleted').length;
+				count = todos.filter((item) => item.state === 'completed').length;
+				
+            }
+           
+            this.get(".checklist-counter").innerHTML =  `${count} of ${total}`;
+            
+		} catch (err) {
+			console.log(err);
+		}
+      
+    }
     setTitle(days) {
         if (!days) return;
         //console.log(`days ${JSON.stringify(days)}`);
@@ -113,15 +130,17 @@ export default class extends app.View {
             title = `Bis 12 Monate nach dem Umzug`;
         }
 
-        this.get(".h2-title").innerHTML = title;
+        this.get(".checklist-title").innerHTML = title;
     }
 
     renderToDoItems(todos) {
-        // Click on a close button to hide the current list item
-
+       
         if (!todos) { return; }
         if (todos.days) {
-            this.get('.h2-title').innerHTML = `${todos.days} days before move`;
+            this.get('.checklist-title').innerHTML = `${todos.days} days before move`;
+        }
+        if (todos) {
+             this.setCounter(todos);
         }
         let list = Array.prototype.map.call(todos, (item) => {
             if (item.state !== "deleted") {

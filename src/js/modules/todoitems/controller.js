@@ -1,6 +1,6 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-//import * as data from "../../json/data";
+import * as data from "../../json/data";
 
 "use strict"
 
@@ -20,25 +20,27 @@ export default class extends app.Controller {
             console.log(`model changed`);
             this.view.setTitle(this.model.get('days'));
             this.view.renderToDoItems(this.model.get('tasks'));
-
-            this.bind({
-                'span.close': (el, model, view, controller) => {
-                    el.onclick = (e) => this.removeToDoItem(e);
-                }
-            })
-            this.bind({
-                'li': (el, model, view, controller) => {
-                    el.onclick = (e) => this.changeToDoItemStatus(e);
-                }
-            })
+            this.bindEventListeners();
         });
+        setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
+    }
 
+    bindEventListeners() {
+        this.bind({
+            'span.close': (el, model, view, controller) => {
+                el.onclick = (e) => this.removeToDoItem(e);
+            }
+        })
+        this.bind({
+            'li': (el, model, view, controller) => {
+                el.onclick = (e) => this.changeToDoItemStatus(e);
+            }
+        })
         this.bind({
             '#addBtn': (el, model, view, controller) => {
                 el.onclick = (e) => this.addToDoItem(e);
             }
         });
-
         this.bind({
             '#todo': (el, model, view, controller) => {
                 el.onkeypress = (e) => {
@@ -49,25 +51,23 @@ export default class extends app.Controller {
                 }
             }
         });
-
-        //setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
     }
 
     changeToDoItemStatus(e) {
         if (e.srcElement.tagName === "SPAN") return;
         let li, input, label;
-       
+
         ({ li, input, label } = this.getClicked(e, li, input, label));
 
         if (input.checked) {
             li.classList.add('checked');
-            if(label){
+            if (label) {
                 label.classList.add(`checkbox-container`);
                 label.classList.add('checked');
             }
             li.dataset.state = "completed";
         } else {
-            if(label){
+            if (label) {
                 label.classList.remove('checked');
                 label.classList.add(`checkbox-container`);
             }
@@ -76,7 +76,7 @@ export default class extends app.Controller {
         }
         let data = this.getModelState(e);
         this.model.set({ 'tasks': data.tasks });
-
+        this.view.setCounter(data.tasks);
         // this.sendMessageToWix({
         //     tasks: this.model.get('tasks'),
         //     POST: "POST"
@@ -84,7 +84,7 @@ export default class extends app.Controller {
 
     }
 
-    getClicked(e, li, input,label) {
+    getClicked(e, li, input, label) {
         if (e.target.tagName === 'LABEL') {
             li = e.srcElement.parentElement;
             input = e.srcElement.children[0];
@@ -105,7 +105,6 @@ export default class extends app.Controller {
 
     removeToDoItem(event) {
         this.view.confirm(``, "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (dataset) => {
-
             let tasks = this.model.get('tasks');
             this.model.set({
                 'tasks': tasks.map(function (value, index, arr) {
@@ -115,11 +114,7 @@ export default class extends app.Controller {
                     return value;
                 })
             });
-
-            // this.sendMessageToWix({
-            //     tasks: this.model.get('tasks'),
-            //     POST: "POST"
-            // });
+            this.view.setCounter(this.model.get('tasks'));
         }, () => { }, event);
     }
 
@@ -127,27 +122,18 @@ export default class extends app.Controller {
         let title = this.view.get("#todo").value;
         if (!title) return;
         let todo = new ToDoViewModel.default(this.model.get('days'), title, "custom");
-
         let data = { tasks: this.model.get('tasks') };
-
-
         if (data.tasks.length > 0) {
             data.tasks.unshift(todo);
         } else {
             data.tasks = [todo];
         }
-
         this.view.addItem(todo);
-
         console.log('item added, model state:', this.model.get('tasks'));
-
-        this.model.set({ 'tasks': data.tasks });
         this.view.get("#todo").value = '';
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     POST: "POST"
-        // });
-
+        this.model.set({ 'tasks': data.tasks });
+        this.view.setCounter(data.tasks);
+        this.bindEventListeners();
     }
 
     sendMessageToWix(jsObj) {
@@ -162,7 +148,7 @@ export default class extends app.Controller {
         return data;
     }
 
-   
+
     fromSyncCalendar(data) { //data is event.data
         let { syncCalendar } = data;
         return syncCalendar;
@@ -175,7 +161,7 @@ export default class extends app.Controller {
 
             let { tasks, days, ready, saveAll, beforeRegister, syncCalendar, error } = event.data;
 
-            if(error){
+            if (error) {
                 this.view.info(`Error`, `${JSON.stringify(error)}`);
                 return;
             }
@@ -188,7 +174,7 @@ export default class extends app.Controller {
                 return;
             }
             if (saveAll) {
-               
+
                 if (!beforeRegister) {
                     this.view.info(``, `Ihre Daten wurden erfolgreich gespeichert.`);
                 }

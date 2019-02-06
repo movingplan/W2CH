@@ -14,11 +14,5 @@ export default class ToDoViewModel  {
         )
     }
 
-   
-// [{ '_id': guid, 'title': title, 'state': "custom", "days": days.days, "days_after_move": days.days_after_move }];
-   
-// var m = new ToDoViewModel({days:{days:90, days_before_move: 30}}, "Test title", "custom");
-// let data = { tasks:[{}] };
-// data.tasks.push(m);
-// console.log(data);
+
 }
