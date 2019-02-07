@@ -91,7 +91,7 @@ export default class extends app.View {
 				
             }
            
-            this.get(".checklist-counter").innerHTML =  `${count} of ${total}`;
+            this.get(".checklist-counter").innerHTML =  `${count}/${total}`;
             
 		} catch (err) {
 			console.log(err);

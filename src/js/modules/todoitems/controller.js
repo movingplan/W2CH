@@ -72,13 +72,11 @@ export default class extends app.Controller {
             li.addClass('checked');
             i.attr("checked",true);
             li.attr(`data-state`, `completed`);
-            //i.checked = true;
         } else {
             l.removeClass('checked');
             li.removeClass('checked');
             i.attr("checked",false);
             li.attr(`data-state`, `default`);
-            //i.checked = false;
         }
        
         let data = this.getModelState(e, li);
