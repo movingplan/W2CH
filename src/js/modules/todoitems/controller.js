@@ -1,6 +1,7 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-//import * as data from "../../json/data";
+import { LOADIPHLPAPI } from "dns";
+import * as data from "../../json/data";
 
 "use strict"
 
@@ -22,18 +23,18 @@ export default class extends app.Controller {
             this.view.renderToDoItems(this.model.get('tasks'));
             this.bindEventListeners();
         });
-       // setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
+         setTimeout(() => { this.model.set({ 'tasks': data.tasks, 'days': { days: 90, days_after_move: 0 } }) }, 1000);
     }
 
     bindEventListeners() {
         this.bind({
             'span.close': (el, model, view, controller) => {
-                el.onclick = (e) => this.removeToDoItem(e);
+                el.onclick = (e) => this.removeToDoItem(e,el);
             }
         })
         this.bind({
             'li': (el, model, view, controller) => {
-                el.onclick = (e) => this.changeToDoItemStatus(e);
+                el.onclick = (e) => this.changeToDoItemStatus(e, el);
             }
         })
         this.bind({
@@ -51,37 +52,53 @@ export default class extends app.Controller {
                 }
             }
         });
+        this.bind({
+            '#debug': (el, model, view, controller) => {
+                el.onclick = (e) => {
+                    this.view.get('.debugArea').innerHTML = JSON.stringify(this.model.get('tasks'));
+                }
+            }
+        });
     }
 
-    changeToDoItemStatus(e) {
-        if (e.srcElement.tagName === "SPAN") return;
-        let li, input, label;
-
-        ({ li, input, label } = this.getClicked(e, li, input, label));
-
-        if (input.checked) {
-            li.classList.add('checked');
-            if (label) {
-                label.classList.add(`checkbox-container`);
-                label.classList.add('checked');
-            }
-            li.dataset.state = "completed";
+    changeToDoItemStatus(e, el) {
+        e.preventDefault();
+        let li = $(el);
+        let i = $(el).find('input');
+        let l = $(el).find('label');
+        let s = $(el).find('label');
+        if (li.attr(`data-state`) !== `completed`) {
+            l.addClass('checked');
+            li.addClass('checked');
+            i.attr("checked",true);
+            li.attr(`data-state`, `completed`);
+            i.checked = true;
         } else {
-            if (label) {
-                label.classList.remove('checked');
-                label.classList.add(`checkbox-container`);
-            }
-            li.classList.remove('checked');
-            li.dataset.state = "default";
+            l.removeClass('checked');
+            li.removeClass('checked');
+            i.attr("checked",false);
+            li.attr(`data-state`, `default`);
+            i.checked = false;
         }
-        let data = this.getModelState(e);
+       
+        let data = this.getModelState(e, li);
         this.model.set({ 'tasks': data.tasks });
         this.view.setCounter(data.tasks);
-        // this.sendMessageToWix({
-        //     tasks: this.model.get('tasks'),
-        //     POST: "POST"
-        // });
 
+    }
+    
+    getModelState(el,li) {
+        let res = {state: li.attr('data-state'), id: li.attr('data-id')};
+        let data = { tasks: this.model.get('tasks') } || { tasks: {} };
+        if (data.tasks) {
+            data.tasks.map(function (value, index, arr) {
+                if (value._id === res.id) {
+                    value.state = res.state;
+                }
+                return value;
+            });
+        }
+        return data;
     }
 
     getClicked(e, li, input, label) {
@@ -103,19 +120,23 @@ export default class extends app.Controller {
         return { li, input, label };
     }
 
-    removeToDoItem(event) {
-        this.view.confirm(``, "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (dataset) => {
+    removeToDoItem(event, el) {
+        event.stopPropagation();
+        
+        this.view.confirm(``, "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (res) => {
             let tasks = this.model.get('tasks');
+            console.log(res);
             this.model.set({
                 'tasks': tasks.map(function (value, index, arr) {
-                    if (value._id === dataset.id) {
-                        value.state = dataset.state;
+                    if (value._id === res.id) {
+                        value.state = res.state;
                     }
                     return value;
                 })
             });
             this.view.setCounter(this.model.get('tasks'));
-        }, () => { }, event);
+            $(el).parent('li').hide();
+        }, () => { }, el);
     }
 
     addToDoItem(e) {
@@ -189,17 +210,5 @@ export default class extends app.Controller {
             }
         }
     }
-    getModelState(el) {
-        let dataset = el.path.filter(e => e.tagName === 'LI')[0].dataset;
-        let data = { tasks: this.model.get('tasks') } || { tasks: {} };
-        if (data.tasks) {
-            data.tasks.map(function (value, index, arr) {
-                if (value._id === dataset.id) {
-                    value.state = dataset.state;
-                }
-                return value;
-            });
-        }
-        return data;
-    }
+  
 };

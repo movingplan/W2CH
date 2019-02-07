@@ -41,12 +41,9 @@ export default class extends app.View {
             setInterval(dots, speed / 2);
         });
     }
-    removeItem(e) {
-        e.preventDefault();
-        let li = e.target.parentElement;
-        li.style.display = "none";
-        li.dataset.state = "deleted";
-        return li.dataset;
+    removeItem(  el) {
+        let li = $(el).closest('li');
+        return {state: 'deleted', id: li.data('id')}
     }
 
     addItem(item) {
@@ -72,14 +69,14 @@ export default class extends app.View {
         }, 3000);
         this.modal.modal('show');
     }
-    confirm(title, message, yescallBack, nocallBack, source) {
+    confirm(title, message, yescallBack, nocallBack,  elem) {
 
         this.modal.find('#todoModalCenterTitle').html(title);
         this.modal.find('#message').html(message);
         this.modal.find('.modal-footer').show();
         this.modal.on('click', '#confirm', (e) => {
             this.modal.modal("hide");
-            this.modal.on("hidden.bs.modal", yescallBack(this.removeItem(source)));
+            this.modal.on("hidden.bs.modal", yescallBack(this.removeItem( elem)));
         });
         this.modal.modal('show');
     }
