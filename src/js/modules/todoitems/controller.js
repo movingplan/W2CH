@@ -1,6 +1,5 @@
 import * as app from "../../lib/app";
 import * as ToDoViewModel from "../todoitems/todoviewmodel";
-import { LOADIPHLPAPI } from "dns";
 //import * as data from "../../json/data";
 
 "use strict"
@@ -67,6 +66,13 @@ export default class extends app.Controller {
         let i = $(el).find('input');
         let l = $(el).find('label');
         let s = $(el).find('label');
+        let a = $(el).find('a');
+       // console.log(e.target);
+        if(a.length > 0 && e.target.nodeName ==="A"){
+            let href = $(a).attr('href');
+            window.open(href, '_blank');
+            return;
+        }
         if (li.attr(`data-state`) !== `completed`) {
             l.addClass('checked');
             li.addClass('checked');
