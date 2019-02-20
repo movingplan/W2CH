@@ -129,7 +129,6 @@ export default class extends app.Controller {
         
         this.view.confirm(``, "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (res) => {
             let tasks = this.model.get('tasks');
-            console.log(res);
             this.model.set({
                 'tasks': tasks.map(function (value, index, arr) {
                     if (value._id === res.id) {
@@ -157,7 +156,7 @@ export default class extends app.Controller {
         console.log('item added, model state:', this.model.get('tasks'));
         this.view.get("#todo").value = '';
         this.model.set({ 'tasks': data.tasks });
-        this.view.setCounter(data.tasks);
+        this.view.setCounter(this.model.get('tasks'));
         this.bindEventListeners();
     }
 
