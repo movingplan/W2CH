@@ -28,7 +28,7 @@ export default class extends app.Controller {
     bindEventListeners() {
         this.bind({
             'span.close': (el, model, view, controller) => {
-                el.onclick = (e) => this.removeToDoItem(e,el);
+                el.onclick = (e) => this.removeToDoItem(e, el);
             }
         })
         this.bind({
@@ -67,8 +67,8 @@ export default class extends app.Controller {
         let l = $(el).find('label');
         let s = $(el).find('label');
         let a = $(el).find('a');
-       // console.log(e.target);
-        if(a.length > 0 && e.target.nodeName ==="A"){
+        // console.log(e.target);
+        if (a.length > 0 && e.target.nodeName === "A") {
             let href = $(a).attr('href');
             window.open(href, '_blank');
             return;
@@ -76,23 +76,23 @@ export default class extends app.Controller {
         if (li.attr(`data-state`) !== `completed`) {
             l.addClass('checked');
             li.addClass('checked');
-            i.attr("checked",true);
+            i.attr("checked", true);
             li.attr(`data-state`, `completed`);
         } else {
             l.removeClass('checked');
             li.removeClass('checked');
-            i.attr("checked",false);
+            i.attr("checked", false);
             li.attr(`data-state`, `default`);
         }
-       
+
         let data = this.getModelState(e, li);
         this.model.set({ 'tasks': data.tasks });
         this.view.setCounter(data.tasks);
 
     }
-    
-    getModelState(el,li) {
-        let res = {state: li.attr('data-state'), id: li.attr('data-id')};
+
+    getModelState(el, li) {
+        let res = { state: li.attr('data-state'), id: li.attr('data-id') };
         let data = { tasks: this.model.get('tasks') } || { tasks: {} };
         if (data.tasks) {
             data.tasks.map(function (value, index, arr) {
@@ -105,28 +105,9 @@ export default class extends app.Controller {
         return data;
     }
 
-    getClicked(e, li, input, label) {
-        if (e.target.tagName === 'LABEL') {
-            li = e.srcElement.parentElement;
-            input = e.srcElement.children[0];
-            label = e.target;
-        }
-        if (e.target.tagName === 'SPAN' || e.target.tagName === 'INPUT') {
-            li = e.srcElement.parentElement.parentElement;
-            input = e.srcElement;
-            label = e.srcElement.parentElement;
-        }
-        if (e.target.tagName === 'LI') {
-            li = e.srcElement;
-            input = li.children[0].children[0];
-            label = li.children[0];
-        }
-        return { li, input, label };
-    }
-
     removeToDoItem(event, el) {
         event.stopPropagation();
-        
+
         this.view.confirm(``, "Möchten Sie diese Aufgabe wirklich von Ihrer Checkliste entfernen?", (res) => {
             let tasks = this.model.get('tasks');
             this.model.set({
@@ -183,8 +164,14 @@ export default class extends app.Controller {
 
         if (event.data) {
 
-            let { tasks, days, ready, saveAll, beforeRegister, syncCalendar, error } = event.data;
+            let { tasks, days, ready, saveAll, beforeRegister, syncCalendar, error, blob } = event.data;
 
+            if (blob) {
+                let file = new Blob([blob], { type: 'application/pdf' });
+                var fileURL = URL.createObjectURL(file);
+                window.open(fileURL, '_blank');
+                return;
+            }
             if (error) {
                 this.view.info(`Error`, `${JSON.stringify(error)}`);
                 return;
@@ -213,5 +200,5 @@ export default class extends app.Controller {
             }
         }
     }
-  
+
 };
