@@ -167,9 +167,12 @@ export default class extends app.Controller {
             let { tasks, days, ready, saveAll, beforeRegister, syncCalendar, error, blob } = event.data;
 
             if (blob) {
-                let file = new Blob([blob], { type: 'application/pdf' });
+                console.log(`in blob`);
+                let file = new Blob(blob, { type: 'application/pdf' });
                 var fileURL = URL.createObjectURL(file);
+                console.log(`file url reached`, fileURL);
                 window.open(fileURL, '_blank');
+                console.log(`window open reached`, fileURL);
                 return;
             }
             if (error) {
