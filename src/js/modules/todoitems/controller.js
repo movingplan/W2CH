@@ -170,7 +170,7 @@ export default class extends app.Controller {
                 console.log(`in blob`);
                // let file = new Blob([blob], { type: 'application/pdf' });
                 console.log(`blob ` + blob);
-                console.log(file);
+                //console.log(file);
                 //var fileURL = URL.createObjectURL(file);
                 //console.log(`file url reached`, fileURL);
                 //window.open(fileURL, '_blank');
