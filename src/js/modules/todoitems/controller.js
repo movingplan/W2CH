@@ -172,11 +172,11 @@ export default class extends app.Controller {
                 console.log(`blob ` + blob);
                 console.log(file);
                 //var fileURL = URL.createObjectURL(file);
-                console.log(`file url reached`, fileURL);
+                //console.log(`file url reached`, fileURL);
                 //window.open(fileURL, '_blank');
-                console.log(`window open reached`, fileURL);
+               // console.log(`window open reached`, fileURL);
                 var pdfAsDataUri = "data:application/pdf;base64,"+blob;
-                window.open(pdfAsDataUri);
+                window.open(pdfAsDataUri, "_blank");
                 return;
             }
             if (error) {
